@@ -7,23 +7,20 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MyProject.Models;
-using System.IO;
 
 namespace MyProject.Controllers
 {
-    public class EquipmentsController : Controller
+    public class Equipments1Controller : Controller
     {
-        private ProjectContext db = new ProjectContext();
+        private MyProjectContext db = new MyProjectContext();
 
-        public byte[] imageDataForEdit;
-
-        // GET: Equipments
+        // GET: Equipments1
         public ActionResult Index()
         {
-            return View(db.Equipments);
+            return View(db.Equipments.ToList());
         }
 
-        // GET: Equipments/Details/5
+        // GET: Equipments1/Details/5
         public ActionResult Details(Guid? id)
         {
             if (id == null)
@@ -38,71 +35,31 @@ namespace MyProject.Controllers
             return View(equipment);
         }
 
-        // GET: Equipments/Create
+        // GET: Equipments1/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Equipments/Create
+        // POST: Equipments1/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "EquipmentId,DateOfCreation,Name,Producer,Productivity,Characteristics,imageData")] Equipment equipment, HttpPostedFileBase uploadImage)
+        public ActionResult Create([Bind(Include = "EquipmentId,DateOfCreation,Name,Producer,Productivity,Characteristics,imageData")] Equipment equipment)
         {
             if (ModelState.IsValid)
             {
                 equipment.EquipmentId = Guid.NewGuid();
-                equipment.DateOfCreation = DateTime.Now;
-                byte[] imageData = null;
-                using (var binaryReader = new BinaryReader(uploadImage.InputStream))
-                {
-                    imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
-                }
-                equipment.imageData = imageData;
-
                 db.Equipments.Add(equipment);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             return View(equipment);
         }
 
-        // POST: Equipments/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EquipmentId,DateOfCreation,Name,Producer,Productivity,imageData,Characteristics")] Equipment equipment, HttpPostedFileBase uploadImage)
-        {
-            if (ModelState.IsValid)
-            {
-                equipment.DateOfCreation = DateTime.Now;
-
-                if (uploadImage != null)
-                {
-                    byte[] imageData = null;
-                    using (var binaryReader = new BinaryReader(uploadImage.InputStream))
-                    {
-                        imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
-                    }
-                    equipment.imageData = imageData;
-                }
-                else
-                {
-                    equipment.imageData = imageDataForEdit;
-                    imageDataForEdit = null;
-                }
-
-                db.Entry(equipment).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(equipment);
-        }
-
-        // GET: Equipments/Edit/5
+        // GET: Equipments1/Edit/5
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -110,7 +67,6 @@ namespace MyProject.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Equipment equipment = db.Equipments.Find(id);
-            imageDataForEdit = equipment.imageData;
             if (equipment == null)
             {
                 return HttpNotFound();
@@ -118,8 +74,23 @@ namespace MyProject.Controllers
             return View(equipment);
         }
 
+        // POST: Equipments1/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind(Include = "EquipmentId,DateOfCreation,Name,Producer,Productivity,Characteristics,imageData")] Equipment equipment)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(equipment).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(equipment);
+        }
 
-        // GET: Equipments/Delete/5
+        // GET: Equipments1/Delete/5
         public ActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -134,7 +105,7 @@ namespace MyProject.Controllers
             return View(equipment);
         }
 
-        // POST: Equipments/Delete/5
+        // POST: Equipments1/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
@@ -144,10 +115,6 @@ namespace MyProject.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
-
-
-
 
         protected override void Dispose(bool disposing)
         {

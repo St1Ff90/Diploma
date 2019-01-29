@@ -1,0 +1,80 @@
+﻿@model IEnumerable<MyProject.Models.Equipment>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfCreation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Producer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Productivity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Characteristics)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfCreation)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Producer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Productivity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Characteristics)
+                </td>
+                <td>
+                    @if (item.imageData == null)
+                    {
+                        <div class="form-control-static">Нет картинки</div>
+                    }
+                    else
+                    {
+                        @Html.Raw("<img style='' src=\"data:image/jpeg;base64,"
+             + Convert.ToBase64String(item.imageData) + "\" />")
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.EquipmentId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.EquipmentId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.EquipmentId })
+                </td>
+            </tr>
+        }
+
+    </table>
+</body>
+</html>

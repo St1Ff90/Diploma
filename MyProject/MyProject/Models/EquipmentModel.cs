@@ -8,8 +8,9 @@ using System.IO;
 
 namespace MyProject.Models
 {
-    public class EquipmentModel
+    public class Equipment
     {
+        [Key]
         public Guid EquipmentId { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
@@ -19,35 +20,14 @@ namespace MyProject.Models
 
         public string Producer { get; set; }
 
+        public int Productivity { get; set; }
+
         public string Characteristics { get; set; }
 
-        public byte[] myImage { get; set; }
+        public byte[] imageData { get; set; }
 
-        public System.Drawing.Image GetBitmap()
+        public Equipment()
         {
-            using (var stream = new MemoryStream(myImage))
-            {
-                return System.Drawing.Image.FromStream(stream);
-            }
-        }
-
-        public byte[] ImageToByteArray(System.Drawing.Image imageIn)
-        {
-            using (var ms = new MemoryStream())
-            {
-                imageIn.Save(ms, imageIn.RawFormat);
-                return ms.ToArray();
-            }
-        }
-
-        public EquipmentModel(string name, string prodr, string charact, string imagePath)
-        {
-            this.EquipmentId = Guid.NewGuid();
-            this.DateOfCreation = DateTime.Now;
-            this.Name = name;
-            this.Producer = prodr;
-            this.Characteristics = charact;
-            this.myImage = ImageToByteArray(System.Drawing.Image.FromFile(imagePath));
         }
     }
 }

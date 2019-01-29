@@ -15,8 +15,6 @@ namespace MyProject.Controllers
     {
         private ProjectContext db = new ProjectContext();
 
-        public byte[] imageDataForEdit;
-
         // GET: Equipments
         public ActionResult Index()
         {
@@ -42,6 +40,36 @@ namespace MyProject.Controllers
         public ActionResult Create()
         {
             return View();
+        }
+
+        // GET: Equipments/Edit/5
+        public ActionResult Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Equipment equipment = db.Equipments.Find(id);
+            if (equipment == null)
+            {
+                return HttpNotFound();
+            }
+            return View(equipment);
+        }
+
+        // GET: Equipments/Delete/5
+        public ActionResult Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Equipment equipment = db.Equipments.Find(id);
+            if (equipment == null)
+            {
+                return HttpNotFound();
+            }
+            return View(equipment);
         }
 
         // POST: Equipments/Create
@@ -74,62 +102,25 @@ namespace MyProject.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EquipmentId,DateOfCreation,Name,Producer,Productivity,imageData,Characteristics")] Equipment equipment, HttpPostedFileBase uploadImage)
+        public ActionResult Edit(Equipment equipment, HttpPostedFileBase uploadImage)
         {
             if (ModelState.IsValid)
             {
                 equipment.DateOfCreation = DateTime.Now;
 
-                if (uploadImage != null)
+                if (uploadImage != null)  //Если добавили или обновили картинку
                 {
                     byte[] imageData = null;
                     using (var binaryReader = new BinaryReader(uploadImage.InputStream))
                     {
                         imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
                     }
-                    equipment.imageData = imageData;
-                }
-                else
-                {
-                    equipment.imageData = imageDataForEdit;
-                    imageDataForEdit = null;
+                    equipment.imageData = imageData; //запись массива битов
                 }
 
                 db.Entry(equipment).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
-            }
-            return View(equipment);
-        }
-
-        // GET: Equipments/Edit/5
-        public ActionResult Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Equipment equipment = db.Equipments.Find(id);
-            imageDataForEdit = equipment.imageData;
-            if (equipment == null)
-            {
-                return HttpNotFound();
-            }
-            return View(equipment);
-        }
-
-
-        // GET: Equipments/Delete/5
-        public ActionResult Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Equipment equipment = db.Equipments.Find(id);
-            if (equipment == null)
-            {
-                return HttpNotFound();
             }
             return View(equipment);
         }
@@ -144,10 +135,6 @@ namespace MyProject.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
-
-
-
 
         protected override void Dispose(bool disposing)
         {

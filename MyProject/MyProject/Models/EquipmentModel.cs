@@ -20,6 +20,8 @@ namespace MyProject.Models
 
         public string Producer { get; set; }
 
+        public string Type { get; set; }
+
         public int Productivity { get; set; }
 
         public string Characteristics { get; set; }

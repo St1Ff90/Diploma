@@ -11,18 +11,19 @@ using System.IO;
 
 namespace MyProject.Controllers
 {
-    public class EquipmentsController : Controller
+    public class MainController : Controller
     {
         private ProjectContext db = new ProjectContext();
 
+        #region Equipment
         // GET: Equipments
-        public ActionResult Index()
+        public ActionResult ListOfEquipments()
         {
             return View(db.Equipments);
         }
 
         // GET: Equipments/Details/5
-        public ActionResult Details(Guid? id)
+        public ActionResult EquipmentDetails(Guid? id)
         {
             if (id == null)
             {
@@ -37,13 +38,13 @@ namespace MyProject.Controllers
         }
 
         // GET: Equipments/Create
-        public ActionResult Create()
+        public ActionResult CreateEquipment()
         {
             return View();
         }
 
         // GET: Equipments/Edit/5
-        public ActionResult Edit(Guid? id)
+        public ActionResult EditEquipment(Guid? id)
         {
             if (id == null)
             {
@@ -58,7 +59,7 @@ namespace MyProject.Controllers
         }
 
         // GET: Equipments/Delete/5
-        public ActionResult Delete(Guid? id)
+        public ActionResult DeleteEquipment(Guid? id)
         {
             if (id == null)
             {
@@ -77,22 +78,24 @@ namespace MyProject.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "EquipmentId,DateOfCreation,Name,Producer,Productivity,Characteristics,imageData")] Equipment equipment, HttpPostedFileBase uploadImage)
+        public ActionResult CreateEquipment([Bind(Include = "EquipmentId,DateOfCreation,Name,Producer,Productivity,Characteristics,imageData,Type")] Equipment equipment, HttpPostedFileBase uploadImage)
         {
             if (ModelState.IsValid)
             {
+                if (uploadImage != null)
+                {
+                    byte[] imageData = null;
+                    using (var binaryReader = new BinaryReader(uploadImage.InputStream))
+                    {
+                        imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
+                    }
+                    equipment.imageData = imageData;
+                }
                 equipment.EquipmentId = Guid.NewGuid();
                 equipment.DateOfCreation = DateTime.Now;
-                byte[] imageData = null;
-                using (var binaryReader = new BinaryReader(uploadImage.InputStream))
-                {
-                    imageData = binaryReader.ReadBytes(uploadImage.ContentLength);
-                }
-                equipment.imageData = imageData;
-
                 db.Equipments.Add(equipment);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("ListOfEquipments");
             }
             return View(equipment);
         }
@@ -102,7 +105,7 @@ namespace MyProject.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Equipment equipment, HttpPostedFileBase uploadImage)
+        public ActionResult EditEquipment([Bind(Include = "EquipmentId,DateOfCreation,Name,Producer,Productivity,Characteristics,imageData,Type")] Equipment equipment, HttpPostedFileBase uploadImage)
         {
             if (ModelState.IsValid)
             {
@@ -120,20 +123,20 @@ namespace MyProject.Controllers
 
                 db.Entry(equipment).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("ListOfEquipments");
             }
             return View(equipment);
         }
 
         // POST: Equipments/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("DeleteEquipment")]
+        [ValidateAntiForgeryToken] 
         public ActionResult DeleteConfirmed(Guid id)
         {
             Equipment equipment = db.Equipments.Find(id);
             db.Equipments.Remove(equipment);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("ListOfEquipments");
         }
 
         protected override void Dispose(bool disposing)
@@ -144,5 +147,41 @@ namespace MyProject.Controllers
             }
             base.Dispose(disposing);
         }
+
+        #endregion
+
+        #region ProductionLine
+        //List of Production Lines
+        public ActionResult ListOfProductionLines()
+        {
+            return View(db.ProductionLines);
+        }
+        
+        //GET Create new Line 
+        public ActionResult CreateProductionLine()
+        {
+            return View();
+        }
+
+        // POST: ProductionLines/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateProductionLine([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, LinkedList<string> equipments)
+        {
+            if (ModelState.IsValid)
+            {
+                productionLine.ProductionLineId = Guid.NewGuid();
+
+
+                db.ProductionLines.Add(productionLine);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(productionLine);
+        }
+
+        #endregion
+
     }
 }

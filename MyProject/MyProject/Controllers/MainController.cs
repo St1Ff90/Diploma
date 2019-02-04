@@ -154,7 +154,7 @@ namespace MyProject.Controllers
         //List of Production Lines
         public ActionResult ListOfProductionLines()
         {
-            return View(db.ProductionLines2);
+            return View(db.ProductionLines);
         }
         
         //GET Create new Line 
@@ -166,18 +166,53 @@ namespace MyProject.Controllers
         // POST: ProductionLines/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateProductionLine([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,ec")] ProductionLine productionLine, List<string> equipments)
+        public ActionResult CreateProductionLine([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments)
         {
             if (ModelState.IsValid)
             {
                 productionLine.ProductionLineId = Guid.NewGuid();
+                productionLine.DateOfCreation = DateTime.Now;
                 productionLine.EquipmentContent = equipments;
-
-                db.ProductionLines2.Add(productionLine);
+                db.ProductionLines.Add(productionLine);
                 db.SaveChanges();
                 return RedirectToAction("ListOfProductionLines");
             }
 
+            return View(productionLine);
+        }
+
+        // GET: ProductLines/Edit/5
+        public ActionResult EditProductLines(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ProductionLine productLine = db.ProductionLines.Find(id);
+            if (productLine == null)
+            {
+                return HttpNotFound();
+            }
+            return View(productLine);
+        }
+
+        // POST: ProductLines/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditProductLines([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments)
+        {
+            if (ModelState.IsValid)
+            {
+                productionLine.DateOfCreation = DateTime.Now;
+                productionLine.EquipmentContent = equipments;
+               
+
+                db.Entry(productionLine).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("ListOfProductionLines");
+            }
             return View(productionLine);
         }
 

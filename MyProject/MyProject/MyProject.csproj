@@ -298,6 +298,7 @@
     <Content Include="Views\Main\ListOfEquipments.cshtml" />
     <Content Include="Views\Main\ListOfProductionLines.cshtml" />
     <Content Include="Views\Main\CreateProductionLine.cshtml" />
+    <Content Include="Views\Main\EditProductLines.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

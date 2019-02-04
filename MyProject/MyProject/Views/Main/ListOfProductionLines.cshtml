@@ -13,12 +13,12 @@
 </head>
 <body>
     <p>
-        @Html.ActionLink("Create New", "Create")
+        @Html.ActionLink("Create New", "CreateProductionLine")
     </p>
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.DateOfCreation1)
+                @Html.DisplayNameFor(model => model.DateOfCreation)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -26,13 +26,16 @@
             <th>
                 @Html.DisplayNameFor(model => model.User)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EquipmentContent)
+            </th>
             <th></th>
         </tr>
     
     @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.DateOfCreation1)
+                @Html.DisplayFor(modelItem => item.DateOfCreation)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -41,9 +44,22 @@
                 @Html.DisplayFor(modelItem => item.User)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.ProductionLineId }) |
-                @Html.ActionLink("Details", "Details", new { id=item.ProductionLineId }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.ProductionLineId })
+                @for (int i = 0; i < item.EquipmentContent.Count; i++)
+                {
+                    if (i != item.EquipmentContent.Count-1)
+                    {
+                        <span>@item.EquipmentContent.ElementAt(i) >> </span>
+                    }
+                    else
+                    {
+                        <span>@item.EquipmentContent.ElementAt(i) </span>
+                    }
+                }
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditProductionLine", new { id = item.ProductionLineId }) |
+                @Html.ActionLink("Details", "ProductionLineDetails", new { id = item.ProductionLineId }) |
+                @Html.ActionLink("Delete", "DeleteProductionLine", new { id = item.ProductionLineId })
             </td>
         </tr>
     }

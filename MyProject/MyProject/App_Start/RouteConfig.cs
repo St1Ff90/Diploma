@@ -16,7 +16,7 @@ namespace MyProject
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Equipments", action = "ListOfEquipment", id = UrlParameter.Optional }
+                defaults: new { controller = "Main", action = "ListOfEquipments", id = UrlParameter.Optional }
             );
         }
     }

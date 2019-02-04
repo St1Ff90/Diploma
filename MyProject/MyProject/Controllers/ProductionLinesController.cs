@@ -17,7 +17,7 @@ namespace MyProject.Controllers
         // GET: ProductionLines
         public ActionResult Index()
         {
-            return View(db.ProductionLines.ToList());
+            return View(db.ProductionLines2.ToList());
         }
 
         // GET: ProductionLines/Details/5
@@ -27,7 +27,7 @@ namespace MyProject.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductionLine productionLine = db.ProductionLines.Find(id);
+            ProductionLine productionLine = db.ProductionLines2.Find(id);
             if (productionLine == null)
             {
                 return HttpNotFound();
@@ -51,7 +51,7 @@ namespace MyProject.Controllers
             if (ModelState.IsValid)
             {
                 productionLine.ProductionLineId = Guid.NewGuid();
-                db.ProductionLines.Add(productionLine);
+                db.ProductionLines2.Add(productionLine);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -66,7 +66,7 @@ namespace MyProject.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductionLine productionLine = db.ProductionLines.Find(id);
+            ProductionLine productionLine = db.ProductionLines2.Find(id);
             if (productionLine == null)
             {
                 return HttpNotFound();
@@ -97,7 +97,7 @@ namespace MyProject.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ProductionLine productionLine = db.ProductionLines.Find(id);
+            ProductionLine productionLine = db.ProductionLines2.Find(id);
             if (productionLine == null)
             {
                 return HttpNotFound();
@@ -110,8 +110,8 @@ namespace MyProject.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
         {
-            ProductionLine productionLine = db.ProductionLines.Find(id);
-            db.ProductionLines.Remove(productionLine);
+            ProductionLine productionLine = db.ProductionLines2.Find(id);
+            db.ProductionLines2.Remove(productionLine);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

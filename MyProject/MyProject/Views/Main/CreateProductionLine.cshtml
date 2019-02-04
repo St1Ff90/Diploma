@@ -15,87 +15,74 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
 
-
     @using (Html.BeginForm())
     {
         @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            <h4>ProductionLine</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.DateOfCreation, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.DateOfCreation, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.DateOfCreation, "", new { @class = "text-danger" })
+                </div>
+            </div>
 
-    <div class="form-horizontal">
-        <h4>ProductionLine</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.DateOfCreation, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DateOfCreation, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DateOfCreation, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.User, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.User, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.User, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div ID="items">
+                Оборудование №1: <br><input type="text" name="equipments"><br>
+                <input type="button" value="Добавить поле" onClick="AddItem();" ID="add">
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.User, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.User, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.User, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <form id="form1">
-           Оборудование 1:<br>
-            <input type="text" name="equipments" onfocus="addNewElementOnFocus(this)"><br>
-        </form>
-
-            <div id="placeholder">
-            </div>
-
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
     }
 
     <div>
-        @Html.ActionLink("Back to List", "Index")
+        @Html.ActionLink("Back to List", "ListOfProductionLines")
     </div>
-
-    <script>
-function addNewElementOnFocus(val)
-{
-	let parent = val.parentNode;
-    let par_id = parent.getAttribute("id");
-    let reg = new RegExp('form(\\d+)');
-    let res = reg.exec(par_id)[1];
-
-    let next_doc = document.getElementById("form"+(Number(res)+1));
-    if (!next_doc)
-    {
-    	let placeholder = document.getElementById("placeholder");
-        let innerPlaceholder = placeholder.innerHTML;
-        let newForm = '<br>\
-        <form id = "form'+(Number(res)+1)+'">\n\
-        "Оборудование'+(Number(res)+1)+'":<br>\n\
-        <input type="text" name="dev_id"\n\ onfocus="addNewElementOnFocus(this)"><br>\n\
-        </form>\n\
-        '
-        ;
-
-        placeholder.innerHTML = innerPlaceholder + newForm;
-        val.focus();
-    }
-    console.log(res);
-}
+    <script language="javascript">
+        var items = 1;
+        function AddItem() {
+            div = document.getElementById("items");
+            button = document.getElementById("add");
+            items++;
+            newitem = "Оборудование № " + items + ":";
+            newitem += "<br><input type=\"text\" name=\"equipments\"><br>";
+            newnode = document.createElement("span");
+            newnode.innerHTML = newitem;
+            div.insertBefore(newnode, button);
+        }
     </script>
-
 </body>
 </html>
+
+
+
+
+
+
+
+
+

@@ -14,11 +14,28 @@ namespace MyProject.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime DateOfCreation { get; set; }
 
+
+
         public string Name { get; set; }
 
         public string User { get; set; }
 
-        public LinkedList<string> EquipmentContent { get; set; }
+
+        private List<String> _strings { get; set; }
+
+        public List<string> EquipmentContent
+        {
+            get { return _strings; }
+            set { _strings = value; }
+        }
+
+        public string StringsAsString
+        {
+            get { return String.Join(",", _strings); }
+            set { _strings = value.Split(',').ToList(); }
+        }
+
+
 
         public ProductionLine()
         {

@@ -154,7 +154,7 @@ namespace MyProject.Controllers
         //List of Production Lines
         public ActionResult ListOfProductionLines()
         {
-            return View(db.ProductionLines);
+            return View(db.ProductionLines2);
         }
         
         //GET Create new Line 
@@ -166,16 +166,16 @@ namespace MyProject.Controllers
         // POST: ProductionLines/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateProductionLine([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, LinkedList<string> equipments)
+        public ActionResult CreateProductionLine([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,ec")] ProductionLine productionLine, List<string> equipments)
         {
             if (ModelState.IsValid)
             {
                 productionLine.ProductionLineId = Guid.NewGuid();
+                productionLine.EquipmentContent = equipments;
 
-
-                db.ProductionLines.Add(productionLine);
+                db.ProductionLines2.Add(productionLine);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("ListOfProductionLines");
             }
 
             return View(productionLine);

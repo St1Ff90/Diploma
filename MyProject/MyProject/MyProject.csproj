@@ -211,7 +211,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\ProductionLinesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -286,11 +285,6 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\ProductionLines\Create.cshtml" />
-    <Content Include="Views\ProductionLines\Delete.cshtml" />
-    <Content Include="Views\ProductionLines\Details.cshtml" />
-    <Content Include="Views\ProductionLines\Edit.cshtml" />
-    <Content Include="Views\ProductionLines\Index.cshtml" />
     <Content Include="Views\Main\CreateEquipment.cshtml" />
     <Content Include="Views\Main\DeleteEquipment.cshtml" />
     <Content Include="Views\Main\EquipmentDetails.cshtml" />
@@ -299,6 +293,10 @@
     <Content Include="Views\Main\ListOfProductionLines.cshtml" />
     <Content Include="Views\Main\CreateProductionLine.cshtml" />
     <Content Include="Views\Main\EditProductLines.cshtml" />
+    <Content Include="Views\Main\ProductionLineDetails.cshtml" />
+    <Content Include="Views\Main\DeleteProductionLine.cshtml" />
+    <Content Include="Views\Shared\_Layout_old.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial _old.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

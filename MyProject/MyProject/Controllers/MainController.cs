@@ -101,8 +101,6 @@ namespace MyProject.Controllers
         }
 
         // POST: Equipments/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditEquipment([Bind(Include = "EquipmentId,DateOfCreation,Name,Producer,Productivity,Characteristics,imageData,Type")] Equipment equipment, HttpPostedFileBase uploadImage)
@@ -181,7 +179,7 @@ namespace MyProject.Controllers
             return View(productionLine);
         }
 
-        // GET: ProductLines/Edit/5
+        // GET: ProductLines/Edit/
         public ActionResult EditProductLines(Guid? id)
         {
             if (id == null)
@@ -196,9 +194,7 @@ namespace MyProject.Controllers
             return View(productLine);
         }
 
-        // POST: ProductLines/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: ProductLines/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditProductLines([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments)
@@ -216,6 +212,47 @@ namespace MyProject.Controllers
             return View(productionLine);
         }
 
+        // GET: ProductLines/Details
+        public ActionResult ProductionLineDetails(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ProductionLine productionLine = db.ProductionLines.Find(id);
+            if (productionLine == null)
+            {
+                return HttpNotFound();
+            }
+            return View(productionLine);
+        }
+
+        // GET: Equipments/Delete/5
+        public ActionResult DeleteProductionLine(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ProductionLine productionLine = db.ProductionLines.Find(id);
+            if (productionLine == null)
+            {
+                return HttpNotFound();
+            }
+            return View(productionLine);
+        }
+
+
+        // POST: Equipments/Delete/5
+        [HttpPost, ActionName("DeleteProductionLine")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteProductionLine(Guid id)
+        {
+            ProductionLine productionLine = db.ProductionLines.Find(id);
+            db.ProductionLines.Remove(productionLine);
+            db.SaveChanges();
+            return RedirectToAction("ListOfProductionLines");
+        }
         #endregion
 
     }

@@ -214,8 +214,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201901240801117_InitialCreate.cs" />
+    <Compile Include="Migrations\201901240801117_InitialCreate.Designer.cs">
+      <DependentUpon>201901240801117_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902140932538_DataMigration.cs" />
+    <Compile Include="Migrations\201902140932538_DataMigration.Designer.cs">
+      <DependentUpon>201902140932538_DataMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\DbWraper.cs" />
+    <Compile Include="Models\ApplicationManager.cs" />
+    <Compile Include="Models\DbSeed.cs" />
     <Compile Include="Models\EquipmentModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -297,6 +307,7 @@
     <Content Include="Views\Main\DeleteProductionLine.cshtml" />
     <Content Include="Views\Shared\_Layout_old.cshtml" />
     <Content Include="Views\Shared\_LoginPartial _old.cshtml" />
+    <Content Include="Views\Account\Index1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -313,6 +324,14 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201901240801117_InitialCreate.resx">
+      <DependentUpon>201901240801117_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902140932538_DataMigration.resx">
+      <DependentUpon>201902140932538_DataMigration.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

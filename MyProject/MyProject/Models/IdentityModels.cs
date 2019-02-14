@@ -29,8 +29,5 @@ namespace MyProject.Models
         {
             return new ApplicationDbContext();
         }
-
-        public System.Data.Entity.DbSet<MyProject.Models.Equipment> Equipments { get; set; }
-        public System.Data.Entity.DbSet<MyProject.Models.MyImage> myImages { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿@model MyProject.Models.Equipment
 
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
@@ -50,6 +50,14 @@
             </dd>
 
             <dt>
+                @Html.DisplayNameFor(model => model.Type)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Type)
+            </dd>
+
+            <dt>
                 @Html.DisplayNameFor(model => model.Characteristics)
             </dt>
 
@@ -68,12 +76,12 @@
 
         </dl>
     
-        @using (Html.BeginForm()) {
+        @using (Html.BeginForm(FormMethod.Post)) {
             @Html.AntiForgeryToken()
     
             <div class="form-actions no-color">
-                <input type="submit" value="Delete" class="btn btn-default" /> |
-                @Html.ActionLink("Back to List", "Index")
+                <input type="submit" value="DeleteEquipment" class="btn btn-default" /> |
+                @Html.ActionLink("Back to List", "ListOfEquipments")
             </div>
         }
     </div>

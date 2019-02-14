@@ -1,0 +1,19 @@
+﻿@model MyProject.Controllers.CreateRoleModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Добавить роль";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        @Html.ValidationSummary(true, "")
+        <p>Название:  @Html.EditorFor(model => model.Name)</p>
+        <p>Описание: @Html.EditorFor(model => model.Description)</p>
+        <p><input type="submit" value="Добавить" /></p>
+    </div>
+}
+<input type="button" value="<< Список ролей" onclick="location.href = '/Roles/Index'" , class="btn btn-primary" />

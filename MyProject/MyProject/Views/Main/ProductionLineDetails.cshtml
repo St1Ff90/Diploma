@@ -1,0 +1,60 @@
+﻿@model MyProject.Models.ProductionLine
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ProductionLineDetails</title>
+</head>
+<body>
+    <div>
+        <h4>ProductionLine</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.DateOfCreation)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.DateOfCreation)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.User)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.User)
+            </dd>
+
+            @for (int i = 0; i < Model.EquipmentContent.Count; i++)
+            {
+                <dt>
+                    <label class="control-label col-md-2" for="equipments @i ">Оборудование №@{int num = i + 1;}@num </label>
+                </dt>
+                <dd>
+                    <input class="form-control text-box single-line" id="equipments @i " name="equipments" type="text" value="@Model.EquipmentContent.ElementAt(i)">
+                </dd>
+            }
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "EditProductLines", new { id = Model.ProductionLineId }) |
+        @Html.ActionLink("Back to List", "ListOfProductionLines")
+    </p>
+</body>
+</html>

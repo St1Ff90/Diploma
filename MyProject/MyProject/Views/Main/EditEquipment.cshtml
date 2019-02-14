@@ -1,7 +1,7 @@
 ﻿@model MyProject.Models.Equipment
 
 @{
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
@@ -9,13 +9,14 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Create</title>
+    <title>Edit</title>
 </head>
 <body>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
 
-    @using (Html.BeginForm("Create", "Equipments", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    <!--Должно быть для работы выбора файлов -->
+    @using (Html.BeginForm("EditEquipment", "Main", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 
@@ -23,9 +24,7 @@
         <h4>Equipment</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-
-
+        @Html.HiddenFor(model => model.EquipmentId)
 
         <div class="form-group">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -44,6 +43,14 @@
         </div>
 
         <div class="form-group">
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
             @Html.LabelFor(model => model.Productivity, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Productivity, new { htmlAttributes = new { @class = "form-control" } })
@@ -58,24 +65,39 @@
                 @Html.ValidationMessageFor(model => model.Characteristics, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
+        <!--Если нет картинки -->
+        @if (Model.imageData == null)
+        {
+            <div class="form-control-static">Нет картинки</div>
             <div class="editor-label">Файл изображения</div>
             <div class="editor-field">
                 <input type="file" name="uploadImage" />
             </div>
-        </div>
-
+        }
+        else
+        {
+            <div class="form-group">
+                <div class="col-md-10">
+                    <!--Вывод изображения из модели преобразуя байты -->
+                    @Html.Raw("<img style='width: 150px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(Model.imageData) + "\" />")
+                    <!--Сохраняет текущую картинку! -->
+                    @Html.Hidden("imageData", Model.imageData)
+                    <div class="editor-label">Изменить изображение:</div>
+                    <div class="editor-field">
+                        <input type="file" name="uploadImage" />
+                    </div>
+                </div>
+            </div>
+        }
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Добавить" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
     </div>
-        }
-
-        <div>
-            @Html.ActionLink("Back to List", "Index")
-        </div>
+    }
+    <div>
+        @Html.ActionLink("Back to List", "ListOfEquipments")
+    </div>
 </body>
 </html>

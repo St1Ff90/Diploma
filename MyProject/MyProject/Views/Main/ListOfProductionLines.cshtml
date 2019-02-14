@@ -1,0 +1,69 @@
+﻿@model IEnumerable<MyProject.Models.ProductionLine>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ListOfProductionLines</title>
+</head>
+<body>
+    <p>
+        @Html.ActionLink("Create New", "CreateProductionLine")
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfCreation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EquipmentContent)
+            </th>
+            <th></th>
+        </tr>
+    
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfCreation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User)
+            </td>
+            <td>
+                @for (int i = 0; i < item.EquipmentContent.Count; i++)
+                {
+                    if (i != item.EquipmentContent.Count-1)
+                    {
+                        <span>@item.EquipmentContent.ElementAt(i) >> </span>
+                    }
+                    else
+                    {
+                        <span>@item.EquipmentContent.ElementAt(i) </span>
+                    }
+                }
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditProductLines", new { id = item.ProductionLineId }) |
+                @Html.ActionLink("Details", "ProductionLineDetails", new { id = item.ProductionLineId }) |
+                @Html.ActionLink("Delete", "DeleteProductionLine", new { id = item.ProductionLineId })
+            </td>
+        </tr>
+    }
+    
+    </table>
+</body>
+</html>

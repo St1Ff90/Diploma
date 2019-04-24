@@ -10,6 +10,10 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MyProject.Models;
 using System.Collections.Generic;
+using System.Net;
+using System.Data;
+using System.Data.Entity;
+using System.IO;
 
 namespace MyProject.Controllers
 {
@@ -76,7 +80,8 @@ namespace MyProject.Controllers
 
             // Сбои при входе не приводят к блокированию учетной записи
             // Чтобы ошибки при вводе пароля инициировали блокирование учетной записи, замените на shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            ApplicationUser signedUser = UserManager.FindByEmail(model.Email);
+            var result = await SignInManager.PasswordSignInAsync(signedUser.UserName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -152,7 +157,7 @@ namespace MyProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Age = model.Age };
+                var user = new ApplicationUser { UserName = model.Login, Email = model.Email, Age = model.Age };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -486,18 +491,82 @@ namespace MyProject.Controllers
 
 
         [Authorize]
-        public ActionResult Index1()
+        public ActionResult GetRole()
         {
             IList<string> roles = new List<string> { "Роль не определена" };
             ApplicationUserManager userManager = HttpContext.GetOwinContext()
                                                     .GetUserManager<ApplicationUserManager>();
-            ApplicationUser user = userManager.FindByEmail(User.Identity.Name);
+            ApplicationUser user = userManager.FindByName(User.Identity.Name);
             if (user != null)
                 roles = userManager.GetRoles(user.Id);
             return View(roles);
 
             
         }
+
+        [Authorize]
+        public ActionResult UserList()
+        {
+            IList<ApplicationUser> users = new List<ApplicationUser>{};
+            ApplicationUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
+            users = userManager.Users.ToList();
+            return View(users);
+             
+        }
+
+        public  ActionResult DeleteUser(Guid id)
+        {
+            return null;
+        }
+
+            public async Task<ActionResult> DeleteUserd (string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            //get User Data from Userid
+            var user = await UserManager.FindByIdAsync(id);
+
+            //List Logins associated with user
+            var logins = user.Logins;
+
+            //Gets list of Roles associated with current user
+            var rolesForUser = await UserManager.GetRolesAsync(id);
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                foreach (var login in logins.ToList())
+                {
+                    await UserManager.RemoveLoginAsync(login.UserId, new UserLoginInfo(login.LoginProvider, login.ProviderKey));
+                }
+
+                if (rolesForUser.Count() > 0)
+                {
+                    foreach (var item in rolesForUser.ToList())
+                    {
+                        // item should be the name of the role
+                        var result = await UserManager.RemoveFromRoleAsync(user.Id, item);
+                    }
+                }
+
+                //Delete User
+                await UserManager.DeleteAsync(user);
+
+                TempData["Message"] = "User Deleted Successfully. ";
+                TempData["MessageValue"] = "1";
+                //transaction.commit();
+            }
+
+            return RedirectToAction("UserList", "Account", new { area = "", });
+        }
+
+        ApplicationDbContext context = new ApplicationDbContext();
+
+        
+
 
 
     }

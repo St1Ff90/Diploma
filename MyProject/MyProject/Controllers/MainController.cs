@@ -8,6 +8,11 @@ using System.Web;
 using System.Web.Mvc;
 using MyProject.Models;
 using System.IO;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using System.Threading.Tasks;
+
 
 namespace MyProject.Controllers
 {
@@ -213,7 +218,7 @@ namespace MyProject.Controllers
         }
 
         // GET: ProductLines/Details
-        public ActionResult ProductionLineDetails(Guid? id)
+        public ActionResult ProductionLineDetails(Guid id)
         {
             if (id == null)
             {
@@ -253,6 +258,94 @@ namespace MyProject.Controllers
             db.SaveChanges();
             return RedirectToAction("ListOfProductionLines");
         }
+
+        [Authorize]
+        public ActionResult GetRole()
+        {
+            IList<string> roles = new List<string> { "Роль не определена" };
+            ApplicationUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            ApplicationUser user = userManager.FindByName(User.Identity.Name);
+            if (user != null)
+                roles = userManager.GetRoles(user.Id);
+            return View(roles);
+        }
+
+        [Authorize]
+        public ActionResult UserList()
+        {
+            IList<ApplicationUser> users = new List<ApplicationUser> { };
+            ApplicationUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+
+            users = userManager.Users.ToList();
+            return View(users);
+
+        }
+
+        public ActionResult DeleteUser(Guid? userId)
+        {
+            return null;
+        }
+
+        private ApplicationUserManager _userManager;
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
+        public async Task<ActionResult> DeleteUserd(string userId)
+        {
+            if (userId == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            //get User Data from Userid
+            var user = await UserManager.FindByIdAsync(userId);
+
+            //List Logins associated with user
+            var logins = user.Logins;
+
+            //Gets list of Roles associated with current user
+            var rolesForUser = await UserManager.GetRolesAsync(userId);
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                foreach (var login in logins.ToList())
+                {
+                    await UserManager.RemoveLoginAsync(login.UserId, new UserLoginInfo(login.LoginProvider, login.ProviderKey));
+                }
+
+                if (rolesForUser.Count() > 0)
+                {
+                    foreach (var item in rolesForUser.ToList())
+                    {
+                        // item should be the name of the role
+                        var result = await UserManager.RemoveFromRoleAsync(user.Id, item);
+                    }
+                }
+
+                //Delete User
+                await UserManager.DeleteAsync(user);
+
+                TempData["Message"] = "User Deleted Successfully. ";
+                TempData["MessageValue"] = "1";
+                //transaction.commit();
+            }
+
+            return RedirectToAction("UsersWithRoles", "ManageUsers", new { area = "", });
+        }
+
+        ApplicationDbContext context = new ApplicationDbContext();
+
+
         #endregion
 
     }

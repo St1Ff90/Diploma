@@ -22,7 +22,7 @@ namespace MyProject.Models
             roleManager.Create(role2);
 
             // создаем пользователей
-            var admin = new ApplicationUser { Email = "somemail@mail.ru", UserName = "somemail@mail.ru" };
+            var admin = new ApplicationUser { Email = "somemail@mail.ru", UserName = "somemail" };
             string password = "11111111";
             var result = userManager.Create(admin, password);
 

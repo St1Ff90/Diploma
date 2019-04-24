@@ -307,10 +307,14 @@
     <Content Include="Views\Main\DeleteProductionLine.cshtml" />
     <Content Include="Views\Shared\_Layout_old.cshtml" />
     <Content Include="Views\Shared\_LoginPartial _old.cshtml" />
-    <Content Include="Views\Account\Index1.cshtml" />
+    <Content Include="Views\Account\GetRole.cshtml" />
+    <Content Include="Views\Account\UserList.cshtml" />
+    <Content Include="Views\Main\GetRole.cshtml" />
+    <Content Include="Views\Main\UserList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="ViewModel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

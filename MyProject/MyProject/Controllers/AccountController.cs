@@ -27,7 +27,7 @@ namespace MyProject.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -39,9 +39,9 @@ namespace MyProject.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -126,7 +126,7 @@ namespace MyProject.Controllers
             // Если пользователь введет неправильные коды за указанное время, его учетная запись 
             // будет заблокирована на заданный период. 
             // Параметры блокирования учетных записей можно настроить в IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -157,13 +157,13 @@ namespace MyProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Login, Email = model.Email, Age = model.Age };
+                var user = new ApplicationUser { UserName = model.Login, Email = model.Email};
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await UserManager.AddToRoleAsync(user.Id, "user");
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // Дополнительные сведения о включении подтверждения учетной записи и сброса пароля см. на странице https://go.microsoft.com/fwlink/?LinkID=320771.
                     // Отправка сообщения электронной почты с этой ссылкой
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -500,39 +500,28 @@ namespace MyProject.Controllers
             if (user != null)
                 roles = userManager.GetRoles(user.Id);
             return View(roles);
-
-            
         }
 
         [Authorize]
         public ActionResult UserList()
         {
-            IList<ApplicationUser> users = new List<ApplicationUser>{};
+            IList<ApplicationUser> users = new List<ApplicationUser> { };
             ApplicationUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-
             users = userManager.Users.ToList();
             return View(users);
-             
         }
 
-        public  ActionResult DeleteUser(Guid id)
-        {
-            return null;
-        }
 
-            public async Task<ActionResult> DeleteUserd (string id)
+        public async Task<ActionResult> DeleteUser(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
             //get User Data from Userid
             var user = await UserManager.FindByIdAsync(id);
-
             //List Logins associated with user
             var logins = user.Logins;
-
             //Gets list of Roles associated with current user
             var rolesForUser = await UserManager.GetRolesAsync(id);
 
@@ -542,7 +531,6 @@ namespace MyProject.Controllers
                 {
                     await UserManager.RemoveLoginAsync(login.UserId, new UserLoginInfo(login.LoginProvider, login.ProviderKey));
                 }
-
                 if (rolesForUser.Count() > 0)
                 {
                     foreach (var item in rolesForUser.ToList())
@@ -565,7 +553,7 @@ namespace MyProject.Controllers
 
         ApplicationDbContext context = new ApplicationDbContext();
 
-        
+
 
 
 

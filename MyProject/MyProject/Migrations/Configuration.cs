@@ -5,15 +5,15 @@ namespace MyProject.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<MyProject.Models.ApplicationDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<MyProject.Models.ProjectContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "MyProject.Models.ApplicationDbContext";
+            ContextKey = "MyProject.Models.ProjectContext";
         }
 
-        protected override void Seed(MyProject.Models.ApplicationDbContext context)
+        protected override void Seed(MyProject.Models.ProjectContext context)
         {
             //  This method will be called after migrating to the latest version.
 

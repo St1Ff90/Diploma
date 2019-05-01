@@ -218,6 +218,10 @@
     <Compile Include="Migrations\201901240801117_InitialCreate.Designer.cs">
       <DependentUpon>201901240801117_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902041309363_InitialCreate.cs" />
+    <Compile Include="Migrations\201902041309363_InitialCreate.Designer.cs">
+      <DependentUpon>201902041309363_InitialCreate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201902140932538_DataMigration.cs" />
     <Compile Include="Migrations\201902140932538_DataMigration.Designer.cs">
       <DependentUpon>201902140932538_DataMigration.cs</DependentUpon>
@@ -309,8 +313,8 @@
     <Content Include="Views\Shared\_LoginPartial _old.cshtml" />
     <Content Include="Views\Account\GetRole.cshtml" />
     <Content Include="Views\Account\UserList.cshtml" />
-    <Content Include="Views\Main\GetRole.cshtml" />
-    <Content Include="Views\Main\UserList.cshtml" />
+    <Content Include="Views\Home\MyIndex.cshtml" />
+    <Content Include="Views\Main\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -332,6 +336,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201901240801117_InitialCreate.resx">
       <DependentUpon>201901240801117_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902041309363_InitialCreate.resx">
+      <DependentUpon>201902041309363_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902140932538_DataMigration.resx">
       <DependentUpon>201902140932538_DataMigration.cs</DependentUpon>

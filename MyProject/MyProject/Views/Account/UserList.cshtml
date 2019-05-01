@@ -1,7 +1,5 @@
 ﻿@model List<MyProject.Models.ApplicationUser>
 
-
-
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -14,48 +12,34 @@
     <title>UserList</title>
 </head>
 <body>
- 
-        <table class="table">
+
+    <table class="table">
+        <tr>
+            <th>
+                Email
+            </th>
+            <th>
+                UserName
+            </th>
+
+            <th></th>
+        </tr>
+
+        @foreach (var User in Model)
+        {
             <tr>
-                <th>
-                    Email
-                </th>
-                <th>
-                    UserName
-                </th>
-                <th>
-                    Age
-                </th>
-                <th></th>
+                <td>
+                    @Html.DisplayFor(modelItem => User.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => User.UserName)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Delete", "DeleteUser", new { id = User.Id })
+                </td>
             </tr>
-
-            @foreach (var User in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => User.Email)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => User.UserName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => User.Age)
-                    </td>
-                  
-                    <td>
-
-
-                       
-                        @Html.ActionLink("Delete", "DeleteUserd", new { id = User.Id })
-
-
-
-
-                    </td>
-                </tr>
-            }
-
-        </table>
-    
-    </body>
+        }
+    </table>
+</body>
 </html>

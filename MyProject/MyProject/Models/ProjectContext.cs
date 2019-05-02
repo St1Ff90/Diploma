@@ -22,5 +22,9 @@ namespace MyProject.Models
         public DbSet<Equipment> Equipments { get; set; }
 
         public DbSet<ProductionLine> ProductionLines { get; set; }
+
+
+
+
     }
 }

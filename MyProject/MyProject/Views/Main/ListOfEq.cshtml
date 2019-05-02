@@ -1,0 +1,88 @@
+﻿@model MyProject.Models.EquipmentListViewModel
+
+@{
+    ViewBag.Title = "ListOfEq";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Каталог оборудования:</h2>
+
+@{if (User.IsInRole("admin"))
+    {
+        <p>
+            @Html.ActionLink("Create New", "CreateEquipment")
+        </p>
+    } }
+
+<form method="get">
+    <div class="form-inline">
+        <label class="control-label">Тип: </label>
+        @Html.DropDownList("type", Model.Type as SelectList,
+                    htmlAttributes: new { @class = "form-control" })
+        <label class="control-label">Производитель: </label>
+        @Html.DropDownList("producer", Model.Producer as SelectList,
+                htmlAttributes: new { @class = "form-control" })
+        <input type="submit" value="Фильтр" class="btn btn-default" />
+    </div>
+</form>
+
+
+<table class="table">
+    <tr>
+        <th> Дата </th>
+        <th> Модель </th>
+        <th> Производитель </th>
+        <th> Тип </th>
+        <th> Мощность </th>
+        <th> Характеристики </th>
+        <th> Фото </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Equipments)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfCreation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Producer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Productivity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Characteristics)
+            </td>
+            <td>
+                @if (item.imageData == null)
+                {
+                    <div class="form-control-static">Нет картинки</div>
+                }
+                else
+                {
+                    @Html.Raw("<img style='width: 150px;' src=\"data:image/jpeg;base64,"
+         + Convert.ToBase64String(item.imageData) + "\" />")
+                }
+            </td>
+
+            @{if (User.IsInRole("admin"))
+                {
+                    <td>
+                        @Html.ActionLink("Edit", "EditEquipment", new { id = item.EquipmentId }) |
+                        @Html.ActionLink("Details", "EquipmentDetails", new { id = item.EquipmentId }) |
+                        @Html.ActionLink("Delete", "DeleteEquipment", new { id = item.EquipmentId })
+                    </td>
+                } }
+
+
+        </tr>
+    }
+
+</table>

@@ -262,6 +262,43 @@ namespace MyProject.Controllers
             return View(db.ProductionLines);
         }
 
+        public ActionResult ListOfEq(string type, string producer)
+        {
+            IQueryable<Equipment> equipments = db.Equipments;
+
+            if (!String.IsNullOrEmpty(type) && !type.Equals("Все"))
+            {
+                equipments = equipments.Where(p => p.Type == type);
+            }
+            if (!String.IsNullOrEmpty(producer) && !producer.Equals("Все"))
+            {
+                equipments = equipments.Where(p => p.Producer == producer);
+            }
+
+            List<Equipment> equips = db.Equipments.ToList();
+            equips.Insert(0, new Equipment { Type = "Все", Producer = "Все" });
+
+            List<string> types = new List<string>();
+            List<string> producers = new List<string>();
+            foreach(var e in equips)
+            {
+                if (!types.Contains(e.Type)) types.Add(e.Type);
+                if (!producers.Contains(e.Producer)) producers.Add(e.Producer);                
+            }
+
+            EquipmentListViewModel elvm = new EquipmentListViewModel
+            {
+                Equipments = equipments.ToList(),
+                Type = new SelectList(types),
+                Producer = new SelectList(producers)
+                
+            };
+
+            return View(elvm);
+        }
+
+
+
         #endregion
 
     }

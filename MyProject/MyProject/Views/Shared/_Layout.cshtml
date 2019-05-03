@@ -33,13 +33,12 @@
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="/Home">Главная</a></li>
-                        <li><a href="/Main/ListOfEquipments">Каталог </a></li>
-                        <li><a href="/Main/ListOfProductionLines">Каталог ний</a></li>
-                        <li><a href="/Home/MyIndex">Тест</a></li>
+                        <li class="active"><a href="/Main">Главная</a></li>
+                        <li><a href="/Main/ListOfEquipments">Оборудование</a></li>
+                        <li><a href="/Main/ListOfProductionLines">Линии</a></li>
                         @{if (User.IsInRole("admin"))
                             {
-                                <li><a href="~/Home/AdminPanel">Админцентр</a></li>} }
+                                <li><a href="~/Home/MyIndex">Админцентр</a></li>} }
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         @Html.Partial("_LoginPartial")

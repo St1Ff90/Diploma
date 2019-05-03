@@ -286,7 +286,6 @@
     <Content Include="Views\Main\DeleteEquipment.cshtml" />
     <Content Include="Views\Main\EquipmentDetails.cshtml" />
     <Content Include="Views\Main\EditEquipment.cshtml" />
-    <Content Include="Views\Main\ListOfEquipments.cshtml" />
     <Content Include="Views\Main\ListOfProductionLines.cshtml" />
     <Content Include="Views\Main\CreateProductionLine.cshtml" />
     <Content Include="Views\Main\EditProductLines.cshtml" />
@@ -298,7 +297,7 @@
     <Content Include="Views\Account\UserList.cshtml" />
     <Content Include="Views\Home\MyIndex.cshtml" />
     <Content Include="Views\Main\Index.cshtml" />
-    <Content Include="Views\Main\ListOfEq.cshtml" />
+    <Content Include="Views\Main\ListOfEquipments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

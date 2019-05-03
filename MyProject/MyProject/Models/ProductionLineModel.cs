@@ -15,18 +15,25 @@ namespace MyProject.Models
         public DateTime DateOfCreation { get; set; }
 
 
-
+        [Display(Name = "Продукт")]
         public string Name { get; set; }
-
+        [Display(Name = "Кто добавил")]
         public string User { get; set; }
 
 
         private List<String> _strings { get; set; }
+        private List<int> _ints { get; set; }
 
         public List<string> EquipmentContent
         {
             get { return _strings; }
             set { _strings = value; }
+        }
+
+        public List<int> CapacityContent
+        {
+            get { return _ints; }
+            set { _ints = value; }
         }
 
         public string StringsAsString
@@ -35,6 +42,11 @@ namespace MyProject.Models
             set { _strings = value.Split(',').ToList(); }
         }
 
+        public string IntsAsString
+        {
+            get { return String.Join(",", _ints); }
+            set { _ints = value.Split(',').Select(Int32.Parse).ToList(); }
+        }
 
 
         public ProductionLine()

@@ -21,57 +21,81 @@
     <table class="table">
 
         <tr>
-            <th> Дата </th>
-            <th> Для продукта </th>
-            <th> Состав линии </th>
             @{if (User.IsInRole("admin"))
                 {
-                    <th> Пользователь </th>
+                    <th> Дата </th>
+                } }
+            <th> Для продукта </th>
+            <th> Состав линии </th>
+            <th> Производительность </th>
+            @{if (User.IsInRole("admin"))
+                {
+                    <th> Кто добавил </th>
                     <th></th>
                 }}
         </tr>
 
-
-
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateOfCreation)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
+        <tr>
+            @{if (User.IsInRole("admin"))
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateOfCreation)
+                    </td>
+                } }
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
 
-                <td>
-                    @for (int i = 0; i < item.EquipmentContent.Count; i++)
+            <td>
+                @for (int i = 0; i < item.EquipmentContent.Count; i++)
+                {
+                    if (i != item.EquipmentContent.Count - 1)
                     {
-                        if (i != item.EquipmentContent.Count - 1)
+                        <span>@item.EquipmentContent.ElementAt(i) >> </span>
+                    }
+                    else
+                    {
+                        <span>@item.EquipmentContent.ElementAt(i) </span>
+                    }
+                }
+            </td>
+
+            
+            @if (item.CapacityContent.Count > 0)
+            {
+                <td>
+                    @for (int i = 0; i < item.CapacityContent.Count; i++)
+                    {
+                        if (i != item.CapacityContent.Count - 1)
                         {
-                            <span>@item.EquipmentContent.ElementAt(i) >> </span>
+                            <span>@item.CapacityContent.ElementAt(i) >> </span>
                         }
                         else
                         {
-                            <span>@item.EquipmentContent.ElementAt(i) </span>
+                            <span>@item.CapacityContent.ElementAt(i) </span>
                         }
                     }
                 </td>
-                @{if (User.IsInRole("admin"))
-                    {
-                        <td>
-                            @Html.DisplayFor(modelItem => item.User)
-                        </td>
-
-                        
-                            <td>
-                                @Html.ActionLink("Изменить", "EditProductLines", new { id = item.ProductionLineId }) |
-                                @Html.ActionLink("Детали", "ProductionLineDetails", new { id = item.ProductionLineId }) |
-                                @Html.ActionLink("Удалить", "DeleteProductionLine", new { id = item.ProductionLineId })
-                            </td>
-                        } }
+            }
+            
+            @{if (User.IsInRole("admin"))
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User)
+                    </td>
 
 
-            </tr>
+                    <td>
+                        @Html.ActionLink("Изменить", "EditProductLines", new { id = item.ProductionLineId }) |
+                        @Html.ActionLink("Детали", "ProductionLineDetails", new { id = item.ProductionLineId }) |
+                        @Html.ActionLink("Удалить", "DeleteProductionLine", new { id = item.ProductionLineId })
+                    </td>
+                } }
+
+
+        </tr>
         }
 
     </table>

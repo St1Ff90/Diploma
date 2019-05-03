@@ -195,13 +195,27 @@ namespace MyProject.Controllers
         // POST: ProductionLines/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateProductionLine([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments)
+        public ActionResult CreateProductionLine([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments, List<int> capacitys)
         {
             if (ModelState.IsValid)
             {
                 productionLine.ProductionLineId = Guid.NewGuid();
                 productionLine.DateOfCreation = DateTime.Now;
-                productionLine.EquipmentContent = equipments;
+                productionLine.User = User.Identity.Name;
+
+                List<string> equipmentsNotNull = new List<string>();
+                foreach (string e in equipments)
+                {
+                    if (!String.IsNullOrEmpty(e)) equipmentsNotNull.Add(e);
+                }
+                productionLine.EquipmentContent = equipmentsNotNull;
+
+                List<int> capacitysNotNull = new List<int>();
+                foreach (int c in capacitys)
+                {
+                    if (c != 0) capacitysNotNull.Add(c);
+                }
+                productionLine.CapacityContent = capacitysNotNull;
                 db.ProductionLines.Add(productionLine);
                 db.SaveChanges();
                 return RedirectToAction("ListOfProductionLines");
@@ -228,13 +242,26 @@ namespace MyProject.Controllers
         // POST: ProductLines/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditProductLines([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments)
+        public ActionResult EditProductLines([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments, List<int> capacitys)
         {
             if (ModelState.IsValid)
             {
                 productionLine.DateOfCreation = DateTime.Now;
-                productionLine.EquipmentContent = equipments;
-               
+
+                List<string> equipmentsNotNull = new List<string>();
+                foreach (string e in equipments)
+                {
+                    if (!String.IsNullOrEmpty(e)) equipmentsNotNull.Add(e);
+                }
+                productionLine.EquipmentContent = equipmentsNotNull;
+
+                List<int> capacitysNotNull = new List<int>();
+                foreach (int c in capacitys)
+                {
+                    if (c!=0) capacitysNotNull.Add(c);
+                }
+                productionLine.CapacityContent = capacitysNotNull;
+
 
                 db.Entry(productionLine).State = EntityState.Modified;
                 db.SaveChanges();

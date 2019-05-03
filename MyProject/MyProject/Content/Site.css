@@ -29,6 +29,19 @@
 .col-reg {
     width: 75%;
 }
+
+.add-p-line {
+    width: 83.33333333%;
+}
+
+.form_control-p-line {
+    display: inline-block !important;
+}
+.list-img {
+    max-width: 150px;
+    max-height: 150px;
+}
+
 .btn-register {
     width: 100%;
     max-width: 280px;

@@ -17,7 +17,6 @@ namespace MyProject.Controllers
 
         #region Equipment
         // GET: Equipments
-
         public ActionResult ListOfEquipments(string type, string producer)
         {
             IQueryable<Equipment> equipments = db.Equipments;
@@ -47,10 +46,104 @@ namespace MyProject.Controllers
                 Equipments = equipments.ToList(),
                 Type = new SelectList(types),
                 Producer = new SelectList(producers)
-
             };
 
             return View(elvm);
+        }
+
+        public ActionResult FindEquipment(string productname, string quantityname)
+        {
+            int quantity = Convert.ToInt32(quantityname);
+
+            //Отдаем список продуктов для листа
+            List<string> products = new List<string>();
+            foreach(ProductionLine pl in db.ProductionLines)
+            {products.Add(pl.Name);}
+            ViewBag.Products = products;
+
+            //получение даных с формы
+            if(productname != null)
+            {
+                //ищем нашу линию в базе по названию продукта
+                Guid id = new Guid();
+                foreach(ProductionLine pl in db.ProductionLines)
+                {
+                    //сверяем название продукта, если наш, сохраняем идентификатор
+                    if (pl.Name == productname) id = pl.ProductionLineId;
+                }
+                //Ищем линию по найденному идентификатору в базе
+                ProductionLine prodline = db.ProductionLines.Find(id);
+                //В этом списке будем сохранять отобраные идентификаторы каждого оборудования
+                List<Guid> eqippmentsGuids = new List<Guid>();
+                //Cписок времени работы оборудования
+                List<Double> workTime = new List<double>();
+                //Сюда пишем ошибки подбора
+                List<string> errors = new List<string>();
+                
+                //обрабатываем каждый елемент списка оборудования в линии
+                for (int i = 0; i < prodline.EquipmentContent.Capacity; i++)
+                {
+                    //временный список оборудования
+                    List<Equipment> eQids = new List<Equipment>();
+                    //после подбора по производительности тут перезатираем Гуйд  
+                    Guid bestEquipmentId = new Guid();
+                    //тут будем писать минимальную продуктивность
+                    int currentMinProductivity = 0;
+
+                    //перебераем все оборудование в базе
+                    foreach (var eq in db.Equipments)
+                    {
+                        //если тип оборудования совпал с искомым из позиции в линии:
+                        if(eq.Type == prodline.EquipmentContent.ElementAt(i))
+                        {
+                            //проверяем подходит ли он нам по мощности
+                            if (quantity < eq.Productivity*3) { 
+                                //добавляем во временный список оборудовния 
+                                eQids.Add(eq);
+                                //обновим инфо о минимальной продуктивности
+                                currentMinProductivity = eq.Productivity;
+                                //Записываем идентификатор последнего удачного оборудования
+                                bestEquipmentId = eq.EquipmentId;
+                            }
+                            //Пишем ошибку, если не нашли подходящего оборудования.
+                            if(eQids.Count == 0)
+                            {
+                                int ii = i + 1;
+                                errors.Add("Мы не смогли подобрать оборудования на позицию " + ii + " (" + prodline.EquipmentContent.ElementAt(i) + ")" );    
+                            }
+                        }
+                    }
+                    //отберем минимальную продуктивность
+                    foreach(var Eqs in eQids)
+                    {
+                        //если выбраная меньше:
+                        if(Eqs.Productivity < currentMinProductivity)
+                        {
+                            //записываем продуктивность
+                            currentMinProductivity = Eqs.Productivity;
+                            //сохраняем идентификатор такого оборудования. 
+                            bestEquipmentId = Eqs.EquipmentId;
+                        }
+                    }
+                    //отобрали лучшее оборудование для данной позиции из списка оборудований в линии. 
+                    eqippmentsGuids.Add(bestEquipmentId);
+                    //
+                    if(currentMinProductivity != 0) { 
+                    double tTime = (quantity*1.0)/currentMinProductivity;
+                    workTime.Add(tTime);
+                    }
+                    //меняем обем сырья, что вышло с оборудования
+                    quantity = quantity*prodline.CapacityContent.ElementAt(i)/100;
+                }
+
+                ViewBag.Guids = eqippmentsGuids;
+                ViewBag.Times = workTime;
+                ViewBag.Errors = errors;
+            }
+
+
+
+            return View(db.Equipments);
         }
 
         // GET: Equipments/Details/5
@@ -189,6 +282,13 @@ namespace MyProject.Controllers
         //GET Create new Line 
         public ActionResult CreateProductionLine()
         {
+            List<Equipment> equips = db.Equipments.ToList();
+            List<string> Types = new List<string>();
+            foreach (var e in equips)
+            {
+                if (!Types.Contains(e.Type)) Types.Add(e.Type);
+            }
+            ViewBag.Equipments = Types;
             return View();
         }
 
@@ -216,8 +316,10 @@ namespace MyProject.Controllers
                     if (c != 0) capacitysNotNull.Add(c);
                 }
                 productionLine.CapacityContent = capacitysNotNull;
+                if(capacitysNotNull.Capacity != 0 && equipmentsNotNull.Capacity != 0) { 
                 db.ProductionLines.Add(productionLine);
                 db.SaveChanges();
+                }
                 return RedirectToAction("ListOfProductionLines");
             }
 
@@ -236,6 +338,14 @@ namespace MyProject.Controllers
             {
                 return HttpNotFound();
             }
+
+            List<Equipment> equips = db.Equipments.ToList();
+            List<string> Types = new List<string>();
+            foreach (var e in equips)
+            {
+                if (!Types.Contains(e.Type)) Types.Add(e.Type);
+            }
+            ViewBag.Equipments = Types;
             return View(productLine);
         }
 
@@ -261,10 +371,14 @@ namespace MyProject.Controllers
                     if (c!=0) capacitysNotNull.Add(c);
                 }
                 productionLine.CapacityContent = capacitysNotNull;
+                productionLine.CapacityContent = capacitysNotNull;
 
+                if (capacitysNotNull.Capacity != 0 && equipmentsNotNull.Capacity != 0)
+                {
+                    db.Entry(productionLine).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
 
-                db.Entry(productionLine).State = EntityState.Modified;
-                db.SaveChanges();
                 return RedirectToAction("ListOfProductionLines");
             }
             return View(productionLine);

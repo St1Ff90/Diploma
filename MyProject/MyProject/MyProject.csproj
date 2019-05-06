@@ -297,6 +297,7 @@
     <Content Include="Views\Home\MyIndex.cshtml" />
     <Content Include="Views\Main\Index.cshtml" />
     <Content Include="Views\Main\ListOfEquipments.cshtml" />
+    <Content Include="Views\Main\FindEquipment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

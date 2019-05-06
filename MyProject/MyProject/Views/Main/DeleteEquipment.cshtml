@@ -70,8 +70,20 @@
             </dt>
 
             <dd>
-                @Html.Raw("<img style='width:80px; height:60px;' src=\"data:image/jpeg;base64,"
-                + Convert.ToBase64String(Model.imageData) + "\" />")
+                @if (Model.imageData == null)
+                {
+                    <div class="form-control-static">Нет картинки</div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <div class="col-md-10">
+                            <!--Вывод изображения из модели преобразуя байты -->
+                            @Html.Raw("<img style='width: 150px;' src=\"data:image/jpeg;base64," + Convert.ToBase64String(Model.imageData) + "\" />")
+                            <!--Сохраняет текущую картинку! -->                         
+                        </div>
+                    </div>
+                }
             </dd>
 
         </dl>

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<MyProject.Models.Equipment>
+
+@{
+    ViewBag.Title = "FindEquipment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<p>Text! </p>
+
+<form method="get">
+    <div class="form-inline">
+        <label class="control-label label-filter">Продукт: </label>
+        <select class="form-control text-box single-line form_control-p-line" id="product" name="productname">
+            @foreach (var p in ViewBag.Products)
+            {
+                <option>@p</option>}
+        </select>
+        <label class="control-label label-filter">Количество сырья, кг: </label>
+        <input class="form-control text-box single-line form_control-p-line" id="quantity" name="quantityname" type="number">
+        <input type="submit" value="Подобрать!" class="btn btn-default filter-btn" />
+
+        @if(ViewBag.Guids != null) {
+        List<Guid> myGuids = ViewBag.Guids;
+        foreach (var i in myGuids)
+        {
+            foreach (var m in Model)
+            {
+                if (m.EquipmentId == i)
+                {
+                   string ss = m.Name;
+                    Html.TextBox(ss);
+
+                }
+            }
+        }
+        }
+
+    </div>
+</form>

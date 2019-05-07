@@ -368,10 +368,24 @@ namespace MyProject.Controllers
                 double totalWorkTime = 0.0;
                 //Сюда пишем ошибки подбора
                 List<string> errors = new List<string>();
+                //регулировка общего времени производства
+                double adjustment = 3.0;
+                //Желаемое время происзводства
+                double wistTotalTime = 7.5;
+
 
                 //обрабатываем каждый елемент списка оборудования в линии
                 for (int i = 0; i < prodline.EquipmentContent.Capacity; i++)
                 {
+                    //балансировка текущего этапа
+                    double smena8h = wistTotalTime/prodline.EquipmentContent.Capacity*i;
+                    //Если производство тормозит
+                    if (totalWorkTime > smena8h)
+                    {
+                        //повышаем регулировку (ищем мощнее оборудование)
+                        if (adjustment > 1.0) { adjustment = adjustment - 0.5; }
+                    }
+                    
                     //временный список оборудования
                     List<Equipment> eQids = new List<Equipment>();
                     //после подбора по производительности тут перезатираем Гуйд  
@@ -386,7 +400,7 @@ namespace MyProject.Controllers
                         if (eq.Type == prodline.EquipmentContent.ElementAt(i))
                         {
                             //проверяем подходит ли он нам по мощности
-                            if (quantity < eq.Productivity * 3)
+                            if (quantity < eq.Productivity * adjustment)
                             {
                                 //добавляем во временный список оборудовния 
                                 eQids.Add(eq);

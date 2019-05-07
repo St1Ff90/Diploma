@@ -13,8 +13,10 @@
     {
         totalWorkTime = ViewBag.TotalWorkTime;
     }
-
-
+    int timeScale = Convert.ToInt32(System.Math.Ceiling(totalWorkTime));
+    double oneHour = 100.0 / timeScale;
+    var oneHourWidth = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", oneHour);
+    double margin = 0.0;
     string product = ViewBag.productname;
     if (ViewBag.Guids != null)
     {
@@ -79,10 +81,8 @@
         }
     }
 
-
     @if (equipments.Count != 0)
     {
-
         <table class="table">
             <tr>
                 <th>#</th>
@@ -106,13 +106,9 @@
             }
         </table>
 
-
-
-
-
-
+        <hr />
         <div class="content">
-            <label class="label-find11">Весь процесс происзводства займет @totalWorkTime ч.</label>
+            <label class="label-find11">Весь процесс происзводства займет @System.Math.Round(totalWorkTime, 2) ч.</label>
             <div class="box">
 
                 @for (int i = 0; i < times.Count; i++)
@@ -122,11 +118,46 @@
                     Random ran = new Random(Guid.NewGuid().GetHashCode());
                     var curWidth = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", myWidth);
                     string value = equipments.ElementAt(i).Type;
-                    if (myWidth > 10) { value = equipments.ElementAt(i).Type + " " + minutes + "мин."; } else { value = ""; }
+                    if (myWidth > 10) { value = equipments.ElementAt(i).Type + " " + System.Math.Round(minutes, 0) + "мин."; } else { value = ""; }
 
-                    <div title="@equipments.ElementAt(i).Name | @equipments.ElementAt(i).Type | Время работы: @minutes мин." style="background-color: rgb(@ran.Next(20, 50), @ran.Next(150, 255), @ran.Next(255)); border:thin; width:@curWidth%;">@value &nbsp;</div>
+                    <div title="@equipments.ElementAt(i).Name | @equipments.ElementAt(i).Type | Время работы: @System.Math.Round(minutes, 0) мин." style="background-color: rgb(@ran.Next(20, 50), @ran.Next(150, 255), @ran.Next(255)); border:thin; width:@curWidth%;">@value &nbsp;</div>
                 }
             </div>
+        </div>
+
+        <hr />
+        <div class="content">
+            <label class="label-find11">График производственных процессов:</label>
+            <div class="box">
+                @for (int i = 0; i < timeScale; i++)
+                {                    
+                    <div class="shema-div" style="width:@oneHourWidth%">@i</div>
+                }
+            </div>
+
+
+            
+
+                @for (int i = 0; i < times.Count; i++)
+                {
+                    double myWidth = times.ElementAt(i) * oneHour;
+                    double minutes = times.ElementAt(i) * 60;
+                    double curMargin = margin;
+                    double curMarginText = curMargin+myWidth;
+
+                    var curMarginString = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", curMargin);
+                    var curWidth = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", myWidth);
+                    var curMarginTextString = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", curMarginText);
+
+                    margin += myWidth;
+                    Random ran = new Random(Guid.NewGuid().GetHashCode());
+                    string value = equipments.ElementAt(i).Type + " " + System.Math.Round(minutes, 0) + "мин.";
+            <div class="box">
+                <div title="@equipments.ElementAt(i).Name | @equipments.ElementAt(i).Type | Время работы: @System.Math.Round(minutes, 0) мин." style="margin-left:@curMarginString%; background-color:green; border:thin; width:@curWidth%;">&nbsp;</div>
+                <div style="text-align:left; margin-left:-@curMarginTextString%">@value</div>
+            </div>
+                }
+            
         </div>
 
     }

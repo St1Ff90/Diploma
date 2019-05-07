@@ -117,6 +117,7 @@ textarea {
     width: 33%;
 }
 
+
 .box {
     white-space: nowrap;
     height: 28px;
@@ -141,3 +142,9 @@ textarea {
     text-align: center;
 }
 
+.shema-div {
+    border: hidden!important;
+    border-left: 1px solid blue!important;
+    border-radius: 0px!important;
+    text-align: left!important;
+}

@@ -1,25 +1,23 @@
 ﻿@model IEnumerable<MyProject.Models.Equipment>
 
 @{
+    /**/
+
     ViewBag.Title = "FindEquipment";
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
+    List<MyProject.Models.Equipment> equipments = new List<MyProject.Models.Equipment>();
+    List<double> times = ViewBag.Times;
+    List<string> errors = ViewBag.Errors;
+    double totalWorkTime = 0.0;
+    if (ViewBag.TotalWorkTime != null)
+    {
+        totalWorkTime = ViewBag.TotalWorkTime;
+    }
 
-<p>Text! </p>
 
-<form method="get">
-    <div class="form-inline">
-        <label class="control-label label-filter">Продукт: </label>
-        <select class="form-control text-box single-line form_control-p-line" id="product" name="productname">
-            @foreach (var p in ViewBag.Products)
-            {
-                <option>@p</option>}
-        </select>
-        <label class="control-label label-filter">Количество сырья, кг: </label>
-        <input class="form-control text-box single-line form_control-p-line" id="quantity" name="quantityname" type="number">
-        <input type="submit" value="Подобрать!" class="btn btn-default filter-btn" />
-
-        @if(ViewBag.Guids != null) {
+    string product = ViewBag.productname;
+    if (ViewBag.Guids != null)
+    {
         List<Guid> myGuids = ViewBag.Guids;
         foreach (var i in myGuids)
         {
@@ -27,13 +25,110 @@
             {
                 if (m.EquipmentId == i)
                 {
-                   string ss = m.Name;
-                    Html.TextBox(ss);
-
+                    equipments.Add(m);
                 }
             }
         }
-        }
+    }
+}
+<!DOCTYPE html>
 
-    </div>
-</form>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>FindEquipment</title>
+</head>
+
+<body>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    <p>На данной странице Вы сможете подобрать оборудование для производства желаемого продукта и передаботки определенного количества входного сырья. </p>
+    <p>Чтобы начать, выберите желаемый готовый продукт в поле со списком и введите количество сырья, которое будет отправлено на переработку. </p>
+    <hr />
+    <form method="get">
+        <div class="form-inline">
+            <label class="control-label label-filter">Продукт: </label>
+            <select class="form-control text-box single-line form_control-p-line" id="product" name="productname">
+                @foreach (var p in ViewBag.Products)
+                {
+                    <option>@p</option>}
+            </select>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                            $('#product option:contains("@product")').prop('selected', true);
+                            });
+            </script>
+            <label class="control-label label-filter">Количество сырья, кг: </label>
+            <input class="form-control text-box single-line form_control-p-line" id="quantity" name="quantityname" type="number" value="@ViewBag.Quantity">
+            <input type="submit" value="Подобрать!" class="btn btn-default find-btn" />
+        </div>
+    </form>
+
+    @if (errors != null)
+    {
+        if (errors.Count != 0)
+        {
+            <hr />
+            <div class="alert alert-warning">
+                <strong>К сожалению, в нашей базе нет всего необходимого Вам оборудования. <br />Данные о времени производства и график работы оборудования могут быть не точными!</strong><br />
+                @foreach (string error in errors)
+                {
+                    @error; <br />
+                }
+            </div>
+        }
+    }
+
+
+    @if (equipments.Count != 0)
+    {
+
+        <table class="table">
+            <tr>
+                <th>#</th>
+                <th>Тип</th>
+                <th>Модель</th>
+                <th>Производитель</th>
+                <th>Мощность, кг/час.</th>
+                <th> Характеристики </th>
+            </tr>
+            @for (int i = 0; i < equipments.Count; i++)
+            {
+                MyProject.Models.Equipment eq = equipments.ElementAt(i);
+                <tr>
+                    <td>@{int ii = i + 1;} @ii</td>
+                    <td>@eq.Type</td>
+                    <td>@eq.Name</td>
+                    <td>@eq.Producer</td>
+                    <td>@eq.Productivity</td>
+                    <td>@eq.Characteristics</td>
+                </tr>
+            }
+        </table>
+
+
+
+
+
+
+        <div class="content">
+            <label class="label-find11">Весь процесс происзводства займет @totalWorkTime ч.</label>
+            <div class="box">
+
+                @for (int i = 0; i < times.Count; i++)
+                {
+                    double myWidth = times.ElementAt(i) * 100 / totalWorkTime;
+                    double minutes = times.ElementAt(i) * 60;
+                    Random ran = new Random(Guid.NewGuid().GetHashCode());
+                    var curWidth = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", myWidth);
+                    string value = equipments.ElementAt(i).Type;
+                    if (myWidth > 10) { value = equipments.ElementAt(i).Type + " " + minutes + "мин."; } else { value = ""; }
+
+                    <div title="@equipments.ElementAt(i).Name | @equipments.ElementAt(i).Type | Время работы: @minutes мин." style="background-color: rgb(@ran.Next(20, 50), @ran.Next(150, 255), @ran.Next(255)); border:thin; width:@curWidth%;">@value &nbsp;</div>
+                }
+            </div>
+        </div>
+
+    }
+</body>
+</html>

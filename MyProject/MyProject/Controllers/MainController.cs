@@ -51,101 +51,6 @@ namespace MyProject.Controllers
             return View(elvm);
         }
 
-        public ActionResult FindEquipment(string productname, string quantityname)
-        {
-            int quantity = Convert.ToInt32(quantityname);
-
-            //Отдаем список продуктов для листа
-            List<string> products = new List<string>();
-            foreach(ProductionLine pl in db.ProductionLines)
-            {products.Add(pl.Name);}
-            ViewBag.Products = products;
-
-            //получение даных с формы
-            if(productname != null)
-            {
-                //ищем нашу линию в базе по названию продукта
-                Guid id = new Guid();
-                foreach(ProductionLine pl in db.ProductionLines)
-                {
-                    //сверяем название продукта, если наш, сохраняем идентификатор
-                    if (pl.Name == productname) id = pl.ProductionLineId;
-                }
-                //Ищем линию по найденному идентификатору в базе
-                ProductionLine prodline = db.ProductionLines.Find(id);
-                //В этом списке будем сохранять отобраные идентификаторы каждого оборудования
-                List<Guid> eqippmentsGuids = new List<Guid>();
-                //Cписок времени работы оборудования
-                List<Double> workTime = new List<double>();
-                //Сюда пишем ошибки подбора
-                List<string> errors = new List<string>();
-                
-                //обрабатываем каждый елемент списка оборудования в линии
-                for (int i = 0; i < prodline.EquipmentContent.Capacity; i++)
-                {
-                    //временный список оборудования
-                    List<Equipment> eQids = new List<Equipment>();
-                    //после подбора по производительности тут перезатираем Гуйд  
-                    Guid bestEquipmentId = new Guid();
-                    //тут будем писать минимальную продуктивность
-                    int currentMinProductivity = 0;
-
-                    //перебераем все оборудование в базе
-                    foreach (var eq in db.Equipments)
-                    {
-                        //если тип оборудования совпал с искомым из позиции в линии:
-                        if(eq.Type == prodline.EquipmentContent.ElementAt(i))
-                        {
-                            //проверяем подходит ли он нам по мощности
-                            if (quantity < eq.Productivity*3) { 
-                                //добавляем во временный список оборудовния 
-                                eQids.Add(eq);
-                                //обновим инфо о минимальной продуктивности
-                                currentMinProductivity = eq.Productivity;
-                                //Записываем идентификатор последнего удачного оборудования
-                                bestEquipmentId = eq.EquipmentId;
-                            }
-                            //Пишем ошибку, если не нашли подходящего оборудования.
-                            if(eQids.Count == 0)
-                            {
-                                int ii = i + 1;
-                                errors.Add("Мы не смогли подобрать оборудования на позицию " + ii + " (" + prodline.EquipmentContent.ElementAt(i) + ")" );    
-                            }
-                        }
-                    }
-                    //отберем минимальную продуктивность
-                    foreach(var Eqs in eQids)
-                    {
-                        //если выбраная меньше:
-                        if(Eqs.Productivity < currentMinProductivity)
-                        {
-                            //записываем продуктивность
-                            currentMinProductivity = Eqs.Productivity;
-                            //сохраняем идентификатор такого оборудования. 
-                            bestEquipmentId = Eqs.EquipmentId;
-                        }
-                    }
-                    //отобрали лучшее оборудование для данной позиции из списка оборудований в линии. 
-                    eqippmentsGuids.Add(bestEquipmentId);
-                    //
-                    if(currentMinProductivity != 0) { 
-                    double tTime = (quantity*1.0)/currentMinProductivity;
-                    workTime.Add(tTime);
-                    }
-                    //меняем обем сырья, что вышло с оборудования
-                    quantity = quantity*prodline.CapacityContent.ElementAt(i)/100;
-                }
-
-                ViewBag.Guids = eqippmentsGuids;
-                ViewBag.Times = workTime;
-                ViewBag.Errors = errors;
-            }
-
-
-
-            return View(db.Equipments);
-        }
-
         // GET: Equipments/Details/5
         public ActionResult EquipmentDetails(Guid? id)
         {
@@ -414,7 +319,6 @@ namespace MyProject.Controllers
             return View(productionLine);
         }
 
-
         // POST: Equipments/Delete/5
         [HttpPost, ActionName("DeleteProductionLine")]
         [ValidateAntiForgeryToken]
@@ -425,7 +329,6 @@ namespace MyProject.Controllers
             db.SaveChanges();
             return RedirectToAction("ListOfProductionLines");
         }
-
         #endregion
 
         #region Index
@@ -434,6 +337,106 @@ namespace MyProject.Controllers
             return View();
         }
 
+        public ActionResult FindEquipment(string productname, string quantityname)
+        {
+            int quantity = Convert.ToInt32(quantityname);
+            ViewBag.Productname = productname;
+            ViewBag.Quantity = quantity;
+            //Отдаем список продуктов для листа
+            List<string> products = new List<string>();
+            foreach (ProductionLine pl in db.ProductionLines)
+            { products.Add(pl.Name); }
+            ViewBag.Products = products;
+
+            //получение даных с формы
+            if (productname != null)
+            {
+                //ищем нашу линию в базе по названию продукта
+                Guid id = new Guid();
+                foreach (ProductionLine pl in db.ProductionLines)
+                {
+                    //сверяем название продукта, если наш, сохраняем идентификатор
+                    if (pl.Name == productname) id = pl.ProductionLineId;
+                }
+                //Ищем линию по найденному идентификатору в базе
+                ProductionLine prodline = db.ProductionLines.Find(id);
+                //В этом списке будем сохранять отобраные идентификаторы каждого оборудования
+                List<Guid> eqippmentsGuids = new List<Guid>();
+                //Cписок времени работы оборудования
+                List<Double> workTime = new List<double>();
+                //Общее время работы линии
+                double totalWorkTime = 0.0;
+                //Сюда пишем ошибки подбора
+                List<string> errors = new List<string>();
+
+                //обрабатываем каждый елемент списка оборудования в линии
+                for (int i = 0; i < prodline.EquipmentContent.Capacity; i++)
+                {
+                    //временный список оборудования
+                    List<Equipment> eQids = new List<Equipment>();
+                    //после подбора по производительности тут перезатираем Гуйд  
+                    Guid bestEquipmentId = new Guid();
+                    //тут будем писать минимальную продуктивность
+                    int currentMinProductivity = 0;
+
+                    //перебераем все оборудование в базе
+                    foreach (var eq in db.Equipments)
+                    {
+                        //если тип оборудования совпал с искомым из позиции в линии:
+                        if (eq.Type == prodline.EquipmentContent.ElementAt(i))
+                        {
+                            //проверяем подходит ли он нам по мощности
+                            if (quantity < eq.Productivity * 3)
+                            {
+                                //добавляем во временный список оборудовния 
+                                eQids.Add(eq);
+                                //обновим инфо о минимальной продуктивности
+                                currentMinProductivity = eq.Productivity;
+                                //Записываем идентификатор последнего удачного оборудования
+                                bestEquipmentId = eq.EquipmentId;
+                            }
+                        }
+                    }
+                    //Пишем ошибку, если не нашли подходящего оборудования.
+                    if (eQids.Count == 0)
+                    {
+                        int ii = i + 1;
+                        errors.Add("Мы не смогли подобрать оборудования на позицию " + ii + " (" + prodline.EquipmentContent.ElementAt(i) + ")");
+                    }
+
+                    //отберем минимальную продуктивность
+                    foreach (var Eqs in eQids)
+                    {
+                        //если выбраная меньше:
+                        if (Eqs.Productivity < currentMinProductivity)
+                        {
+                            //записываем продуктивность
+                            currentMinProductivity = Eqs.Productivity;
+                            //сохраняем идентификатор такого оборудования. 
+                            bestEquipmentId = Eqs.EquipmentId;
+                        }
+                    }
+                    //отобрали лучшее оборудование для данной позиции из списка оборудований в линии. 
+                    eqippmentsGuids.Add(bestEquipmentId);
+                    //
+                    if (currentMinProductivity != 0)
+                    {
+                        double tTime = (quantity * 1.0) / currentMinProductivity;
+                        workTime.Add(tTime);
+                        totalWorkTime += tTime;
+                    }
+                    //меняем обем сырья, что вышло с оборудования
+                    quantity = quantity * prodline.CapacityContent.ElementAt(i) / 100;
+                }
+
+                ViewBag.Guids = eqippmentsGuids;
+                ViewBag.Times = workTime;
+                ViewBag.TotalWorkTime = totalWorkTime;
+                ViewBag.Errors = errors;
+
+            }
+            return View(db.Equipments);
+        }
 
 
 

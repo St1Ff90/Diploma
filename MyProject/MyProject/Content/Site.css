@@ -105,3 +105,39 @@ textarea {
     max-width: 280px;
 }
 
+.content {
+    overflow: hidden;
+    width: 100%;
+    background-color: ivory;
+    border-radius: 5px;
+}
+
+.find-btn {
+    max-width: none;
+    width: 33%;
+}
+
+.box {
+    white-space: nowrap;
+    height: 28px;
+    width: 98%;
+    margin-left: 1%;
+    margin-top: 9px;
+}
+
+.label-find11{
+    width:100%;
+    text-align:center;
+    margin-bottom:-5px;
+    margin-top: 5px;
+}
+
+.box div {
+    margin-left: -2px;
+    margin-right: -2px;
+    display: inline-block;
+    border: 1px solid black;
+    border-radius: 2px;
+    text-align: center;
+}
+

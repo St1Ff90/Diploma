@@ -8,6 +8,7 @@
     List<MyProject.Models.Equipment> equipments = new List<MyProject.Models.Equipment>();
     List<double> times = ViewBag.Times;
     List<string> errors = ViewBag.Errors;
+    List<int> curEqProductivity = ViewBag.CurEqProductivity;
     double totalWorkTime = 0.0;
     if (ViewBag.TotalWorkTime != null)
     {
@@ -89,20 +90,22 @@
                 <th>Тип</th>
                 <th>Модель</th>
                 <th>Производитель</th>
-                <th>Мощность, кг/час.</th>
+                <th>Макс. мощность, кг/час.</th>
+                <th>Исполь. мощность, кг/час.</th>
                 <th> Характеристики </th>
             </tr>
             @for (int i = 0; i < equipments.Count; i++)
             {
                 MyProject.Models.Equipment eq = equipments.ElementAt(i);
-                <tr>
-                    <td>@{int ii = i + 1;} @ii</td>
-                    <td>@eq.Type</td>
-                    <td>@eq.Name</td>
-                    <td>@eq.Producer</td>
-                    <td>@eq.Productivity</td>
-                    <td>@eq.Characteristics</td>
-                </tr>
+            <tr>
+                <td>@{int ii = i + 1;} @ii</td>
+                <td>@eq.Type</td>
+                <td>@eq.Name</td>
+                <td>@eq.Producer</td>
+                <td>@eq.Productivity</td>
+                <td>@curEqProductivity.ElementAt(i)</td>
+                <td>@eq.Characteristics</td>
+            </tr>
             }
         </table>
 

@@ -339,9 +339,12 @@ namespace MyProject.Controllers
 
         public ActionResult FindEquipment(string productname, string quantityname)
         {
-            int quantity = Convert.ToInt32(quantityname);
+            int quantityOfMilk = Convert.ToInt32(quantityname);
             ViewBag.Productname = productname;
-            ViewBag.Quantity = quantity;
+            ViewBag.Quantity = quantityOfMilk;
+            //тут будем писать минимальную продуктивность
+            int currentMinProductivity = 0;
+            int previousEqProductivity = 0;
             //Отдаем список продуктов для листа
             List<string> products = new List<string>();
             foreach (ProductionLine pl in db.ProductionLines)
@@ -362,6 +365,8 @@ namespace MyProject.Controllers
                 ProductionLine prodline = db.ProductionLines.Find(id);
                 //В этом списке будем сохранять отобраные идентификаторы каждого оборудования
                 List<Guid> eqippmentsGuids = new List<Guid>();
+
+                List<int> curEqProductivity = new List<int>();
                 //Cписок времени работы оборудования
                 List<Double> workTime = new List<double>();
                 //Общее время работы линии
@@ -369,29 +374,25 @@ namespace MyProject.Controllers
                 //Сюда пишем ошибки подбора
                 List<string> errors = new List<string>();
                 //регулировка общего времени производства
-                double adjustment = 3.0;
+                double adjustment = 1.0;
                 //Желаемое время происзводства
-                double wistTotalTime = 7.5;
+                double totalTimeFoProduction = 4.0;
+
+                double timeOfPreviousEqWork = 0.0;
 
 
                 //обрабатываем каждый елемент списка оборудования в линии
                 for (int i = 0; i < prodline.EquipmentContent.Capacity; i++)
                 {
-                    //балансировка текущего этапа
-                    double smena8h = wistTotalTime/prodline.EquipmentContent.Capacity*i;
-                    //Если производство тормозит
-                    if (totalWorkTime > smena8h)
-                    {
-                        //повышаем регулировку (ищем мощнее оборудование)
-                        if (adjustment > 1.0) { adjustment = adjustment - 0.5; }
-                    }
+                    //Разбивает время на каждый этап производства
+                    //adjustment = totalTimeFoProduction/prodline.EquipmentContent.Capacity;
                     
                     //временный список оборудования
-                    List<Equipment> eQids = new List<Equipment>();
+                    List<Equipment> equipmentsOfOneType = new List<Equipment>();
                     //после подбора по производительности тут перезатираем Гуйд  
                     Guid bestEquipmentId = new Guid();
-                    //тут будем писать минимальную продуктивность
-                    int currentMinProductivity = 0;
+                    int productivityOnTheStageShoulBe = 0;
+                    if (productivityOnTheStageShoulBe == 0) productivityOnTheStageShoulBe = Convert.ToInt32(Convert.ToDouble(quantityOfMilk)/adjustment);
 
                     //перебераем все оборудование в базе
                     foreach (var eq in db.Equipments)
@@ -399,54 +400,74 @@ namespace MyProject.Controllers
                         //если тип оборудования совпал с искомым из позиции в линии:
                         if (eq.Type == prodline.EquipmentContent.ElementAt(i))
                         {
-                            //проверяем подходит ли он нам по мощности
-                            if (quantity < eq.Productivity * adjustment)
+                           //если это первый подбор, будем отсчитывать от входяжено сырья
+
+                           //проверяем подходит ли он нам по мощности
+                            if (productivityOnTheStageShoulBe <= eq.Productivity)
                             {
                                 //добавляем во временный список оборудовния 
-                                eQids.Add(eq);
+                                equipmentsOfOneType.Add(eq);
                                 //обновим инфо о минимальной продуктивности
                                 currentMinProductivity = eq.Productivity;
+                                
                                 //Записываем идентификатор последнего удачного оборудования
                                 bestEquipmentId = eq.EquipmentId;
                             }
                         }
                     }
                     //Пишем ошибку, если не нашли подходящего оборудования.
-                    if (eQids.Count == 0)
+                    if (equipmentsOfOneType.Count == 0)
                     {
                         int ii = i + 1;
                         errors.Add("Мы не смогли подобрать оборудования на позицию " + ii + " (" + prodline.EquipmentContent.ElementAt(i) + ")");
                     }
 
                     //отберем минимальную продуктивность
-                    foreach (var Eqs in eQids)
+                    foreach (var Eqs in equipmentsOfOneType)
                     {
                         //если выбраная меньше:
                         if (Eqs.Productivity < currentMinProductivity)
                         {
                             //записываем продуктивность
                             currentMinProductivity = Eqs.Productivity;
-                            //сохраняем идентификатор такого оборудования. 
+                            //записываем id
                             bestEquipmentId = Eqs.EquipmentId;
                         }
                     }
                     //отобрали лучшее оборудование для данной позиции из списка оборудований в линии. 
                     eqippmentsGuids.Add(bestEquipmentId);
-                    //
-                    if (currentMinProductivity != 0)
+
+                    if (previousEqProductivity == 0) previousEqProductivity = currentMinProductivity;
+                    if (currentMinProductivity > previousEqProductivity)
                     {
-                        double tTime = (quantity * 1.0) / currentMinProductivity;
+                        currentMinProductivity = previousEqProductivity;
+                    }
+                    if (previousEqProductivity > currentMinProductivity)
+                    { 
+                    previousEqProductivity = currentMinProductivity;
+                    }
+
+                    int exactProductivity = Convert.ToInt32(Convert.ToDouble(quantityOfMilk) / adjustment);
+
+
+                    curEqProductivity.Add(exactProductivity);
+                    //будем считать время работы оборудования
+                    if (equipmentsOfOneType.Count != 0)
+                    {
+                        double tTime = (quantityOfMilk * 1.0) / exactProductivity;
                         workTime.Add(tTime);
-                        totalWorkTime += tTime;
+                        totalWorkTime += tTime-timeOfPreviousEqWork;
+                        timeOfPreviousEqWork = tTime;
                     }
                     //меняем обем сырья, что вышло с оборудования
-                    quantity = quantity * prodline.CapacityContent.ElementAt(i) / 100;
+                    quantityOfMilk = quantityOfMilk * prodline.CapacityContent.ElementAt(i) / 100;
                 }
 
                 ViewBag.Guids = eqippmentsGuids;
                 ViewBag.Times = workTime;
                 ViewBag.TotalWorkTime = totalWorkTime;
                 ViewBag.Errors = errors;
+                ViewBag.CurEqProductivity = curEqProductivity;
 
             }
             return View(db.Equipments);

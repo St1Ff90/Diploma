@@ -5,8 +5,7 @@
 
 .login-checkbox {
     margin-left: 15%;
-    padding-top: 0px!important;
-
+    padding-top: 0px !important;
 }
 
 .login-label {
@@ -26,6 +25,7 @@
 .reg-label {
     width: 25%;
 }
+
 .col-reg {
     width: 75%;
 }
@@ -34,12 +34,18 @@
     width: 83.33333333%;
 }
 
+.text-align-center {
+    text-align: center;
+}
+
 .form_control-p-line {
     display: inline-block !important;
+    width: auto;
 }
+
 .list-img {
     max-width: 150px;
-    max-height: 150px;
+    max-height: 75px;
 }
 
 .btn-register {
@@ -69,7 +75,7 @@
 }
 
 .del-border {
-    border-top: none!important;
+    border-top: none !important;
 }
 
 .logo {
@@ -81,7 +87,6 @@
 }
 
 .navbar navbar-default {
-
     margin-top: 10px;
 }
 
@@ -108,15 +113,20 @@ textarea {
 .content {
     overflow: hidden;
     width: 100%;
-    background-color: ivory;
+    background-color: white;
     border-radius: 5px;
+}
+
+.content-image {
+    background: url(img/skaleNew.png) 100% 100% no-repeat;
+    background-size: 100%;
+    background-position: top 41px left 6px;
 }
 
 .find-btn {
     max-width: none;
-    width: 33%;
+    width: 16%;
 }
-
 
 .box {
     white-space: nowrap;
@@ -126,10 +136,10 @@ textarea {
     margin-top: 9px;
 }
 
-.label-find11{
-    width:100%;
-    text-align:center;
-    margin-bottom:-5px;
+.label-find11 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: -5px;
     margin-top: 5px;
 }
 
@@ -139,12 +149,77 @@ textarea {
     display: inline-block;
     border: 1px solid black;
     border-radius: 2px;
-    text-align: center;
+}
+
+.shema-text {
+    margin-left: 2px !important;
+    background-color: #eee;
+    border: none !important;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+.non-margin {
+    margin-left: 0px !important;
+    margin-right: -4px !important;
 }
 
 .shema-div {
-    border: hidden!important;
-    border-left: 1px solid blue!important;
-    border-radius: 0px!important;
-    text-align: left!important;
+    border: hidden !important;
+    border-radius: 0px !important;
+    text-align: left !important;
+}
+
+.pouring {
+    background: url(img/pouring.gif) no-repeat;
+    background-size: 100% 100%;
+    border-left: none !important;
+}
+
+.draining {
+    background: url(img/draining.gif) 100% 100% no-repeat;
+    background-size: 100% 100%;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    border-right: none !important;
+}
+
+.preparing {
+    background-color: gainsboro;
+}
+
+.washing {
+    background-color: #a1ccf0;
+}
+
+.mainblock {
+    background-color: #c0bb7f;
+    border: thin;
+    border: 0px !important;
+}
+
+.shema-img{
+    vertical-align:bottom;
+}
+
+.my-clas {
+    margin-left: -6px !important;
+    margin-right: -6px !important;
+}
+
+.legend-label {
+    background-color: #eee;
+    margin-right: 20px;
+}
+
+.legend-div {
+    background-color: aliceblue;
+}
+
+.legend-img {
+    
+    width: 90%;
+    margin-bottom:-1px;
 }

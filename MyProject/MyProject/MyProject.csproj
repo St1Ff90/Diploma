@@ -208,6 +208,23 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905031611093_InitialCreate.cs" />
+    <Compile Include="Migrations\201905031611093_InitialCreate.Designer.cs">
+      <DependentUpon>201905031611093_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905081304390_ProjectContext.cs" />
+    <Compile Include="Migrations\201905081304390_ProjectContext.Designer.cs">
+      <DependentUpon>201905081304390_ProjectContext.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905081318017_ProjectContext1.cs" />
+    <Compile Include="Migrations\201905081318017_ProjectContext1.Designer.cs">
+      <DependentUpon>201905081318017_ProjectContext1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905081432343_ProjectContext2.cs" />
+    <Compile Include="Migrations\201905081432343_ProjectContext2.Designer.cs">
+      <DependentUpon>201905081432343_ProjectContext2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationManager.cs" />
     <Compile Include="Models\DbSeed.cs" />
@@ -315,6 +332,20 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201905031611093_InitialCreate.resx">
+      <DependentUpon>201905031611093_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905081304390_ProjectContext.resx">
+      <DependentUpon>201905081304390_ProjectContext.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905081318017_ProjectContext1.resx">
+      <DependentUpon>201905081318017_ProjectContext1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905081432343_ProjectContext2.resx">
+      <DependentUpon>201905081432343_ProjectContext2.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

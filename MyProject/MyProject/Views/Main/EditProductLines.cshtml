@@ -52,17 +52,13 @@
                 <label class="control-label col-md-2" for="equipments_@i ">Оборудование №@{int num = i + 1;}@num </label>
 
                 <div class="col-md-10">
-                    <select class="form-control text-box single-line form_control-p-line" id="equipments_@i" name="equipments">
-
-                        @foreach (string type in ViewBag.Equipments)
-                        {
-                            <option>@type</option>}
-                    </select>
-
-                    @* <input class="form-control text-box single-line form_control-p-line" id="equipments_@i" name="equipments" type="text" value="@Model.EquipmentContent.ElementAt(i)">*@
+                    <select class="form-control text-box single-line form_control-p-line" id="equipments_@i" name="equipments"><option></option>@foreach (string type in ViewBag.Equipments){<option>@type</option>} </select>
                     <span class="field-validation-valid text-danger" data-valmsg-for="equipments" data-valmsg-replace="true"></span>
 
-                    <input class="form-control text-box single-line form_control-p-line" id="equipments_@i" name="capacitys" type="number" value="@Model.CapacityContent.ElementAt(i)">
+                    <input class="form-control text-box single-line form_control-p-line" id="equipments_@i" name="capacitys" type="number" value="@Model.CapacityContent.ElementAt(i)" title="Выход продукта в %">
+                    <span class="field-validation-valid text-danger" data-valmsg-for="equipments" data-valmsg-replace="true"></span>
+
+                    <input class="form-control text-box single-line form_control-p-line" id="equipments_@i" name="delays" type="number" value="@Model.DelayContent.ElementAt(i)" title="Выдержка в оборудовании, мин.">
                     <span class="field-validation-valid text-danger" data-valmsg-for="equipments" data-valmsg-replace="true"></span>
 
                     <script type="text/javascript">
@@ -89,14 +85,12 @@
                 div = document.getElementById("items");
                 button = document.getElementById("add");
                 items++;
-                @*newitem = "<div class=\"form-group\"><label class=\"control-label col-md-2\" for=\"equipments " + items + "\">Оборудование №" + items + "</label>";
-                newitem += "<div class=\"col-md-10\"><input class=\"form-control text-box single-line form_control-p-line\" id=\"equipments " + items + "\" type=\"text\" name=\"equipments\"><span class=\"field-validation-valid text-danger\" data-valmsg-for=\"equipments\" data-valmsg-replace=\"true\"></span>";
-                newitem += "<input class=\"form-control text-box single-line form_control-p-line\" id=\"capacitys1\" name=\"capacitys\" type=\"number\">";
-                newitem += "<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"capacitys\" data-valmsg-replace=\"true\"></span>";
-                newitem += "</div></div>";*@
                 newitem = "<div class=\"form-group\"><label class=\"control-label col-md-2\" for=\"equipments " + items + "\">Оборудование №" + items + "</label><div class=\"col-md-10\">";
-                newitem += "<select class=\"form-control text-box single-line form_control-p-line\" id=\"equipments " + items + "\" name=\"equipments\">@foreach(string type in ViewBag.Equipments) {<option>@type</option>}</select>";
-                newitem += "<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"equipments\" data-valmsg-replace=\"true\"></span><input class=\"form-control text-box single-line form_control-p-line\" id=\"capacitys1\" name=\"capacitys\" type=\"number\">";
+                newitem += "<select class=\"form-control text-box single-line form_control-p-line\" id=\"equipments " + items + "\" name=\"equipments\"><option></option>@foreach(string type in ViewBag.Equipments) {<option>@type</option>}</select>";
+                newitem += "<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"equipments\" data-valmsg-replace=\"true\"></span>"
+                newitem += "<input class=\"form-control text-box single-line form_control-p-line\" id=\"capacitys1\" name=\"capacitys\" type=\"number\" value=\"100\" title=\"Выход продукта в %\">";
+                newitem += "<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"capacitys\" data-valmsg-replace=\"true\"></span>";
+                newitem += "<input class=\"form-control text-box single-line form_control-p-line\" id=\"capacitys1\" name=\"delays\" type=\"number\" value=\"0\" title=\"Выдержка в оборудовании, мин.\">";
                 newitem += "<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"capacitys\" data-valmsg-replace=\"true\"></span>";
                 newitem += "</div></div>";
 

@@ -200,7 +200,7 @@ namespace MyProject.Controllers
         // POST: ProductionLines/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateProductionLine([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments, List<int> capacitys)
+        public ActionResult CreateProductionLine([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments, List<int> capacitys, List<double> delays)
         {
             if (ModelState.IsValid)
             {
@@ -215,13 +215,25 @@ namespace MyProject.Controllers
                 }
                 productionLine.EquipmentContent = equipmentsNotNull;
 
+                int itemsCount = equipmentsNotNull.Count;
                 List<int> capacitysNotNull = new List<int>();
-                foreach (int c in capacitys)
+                List<double> delaysAll = new List<double>();
+
+                for (int i = 0; i < itemsCount; i++)
                 {
-                    if (c != 0) capacitysNotNull.Add(c);
+                    if (capacitys.ElementAt(i) != 0) capacitysNotNull.Add(capacitys.ElementAt(i));
                 }
+
+                for (int i = 0; i < itemsCount; i++)
+                {
+                    delaysAll.Add(delays.ElementAt(i));
+                }
+
+
                 productionLine.CapacityContent = capacitysNotNull;
-                if(capacitysNotNull.Capacity != 0 && equipmentsNotNull.Capacity != 0) { 
+                productionLine.DelayContent = delaysAll;
+
+                if (capacitysNotNull.Count != 0 && equipmentsNotNull.Count != 0 && delaysAll.Count != 0) { 
                 db.ProductionLines.Add(productionLine);
                 db.SaveChanges();
                 }
@@ -257,7 +269,7 @@ namespace MyProject.Controllers
         // POST: ProductLines/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditProductLines([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments, List<int> capacitys)
+        public ActionResult EditProductLines([Bind(Include = "ProductionLineId,DateOfCreation,Name,User,EquipmentContent")] ProductionLine productionLine, List<string> equipments, List<int> capacitys, List<double> delays)
         {
             if (ModelState.IsValid)
             {
@@ -270,15 +282,26 @@ namespace MyProject.Controllers
                 }
                 productionLine.EquipmentContent = equipmentsNotNull;
 
+                int itemsCount = equipmentsNotNull.Count;
                 List<int> capacitysNotNull = new List<int>();
-                foreach (int c in capacitys)
-                {
-                    if (c!=0) capacitysNotNull.Add(c);
-                }
-                productionLine.CapacityContent = capacitysNotNull;
-                productionLine.CapacityContent = capacitysNotNull;
+                List<double> delaysAll = new List<double>();
 
-                if (capacitysNotNull.Capacity != 0 && equipmentsNotNull.Capacity != 0)
+                for (int i = 0; i < itemsCount; i++)
+                {
+                    if (capacitys.ElementAt(i) != 0) capacitysNotNull.Add(capacitys.ElementAt(i));
+                }
+
+                for (int i = 0; i < itemsCount; i++)
+                {
+                    delaysAll.Add(delays.ElementAt(i));
+                }
+
+                
+                productionLine.CapacityContent = capacitysNotNull;
+                productionLine.DelayContent = delaysAll;
+
+
+                if (capacitysNotNull.Count != 0 && equipmentsNotNull.Count != 0)
                 {
                     db.Entry(productionLine).State = EntityState.Modified;
                     db.SaveChanges();
@@ -337,9 +360,11 @@ namespace MyProject.Controllers
             return View();
         }
 
-        public ActionResult FindEquipment(string productname, string quantityname)
+        public ActionResult FindEquipment(string productname, string quantityname, string adj)
         {
             int quantityOfMilk = Convert.ToInt32(quantityname);
+
+            ViewBag.Adj = adj;
             ViewBag.Productname = productname;
             ViewBag.Quantity = quantityOfMilk;
             //тут будем писать минимальную продуктивность
@@ -368,32 +393,34 @@ namespace MyProject.Controllers
 
                 List<int> curEqProductivity = new List<int>();
                 //Cписок времени работы оборудования
-                List<Double> workTime = new List<double>();
+                List<Double> workTimeForEachEq = new List<double>();
+
+                List<Double> delaysList = new List<double>();
                 //Общее время работы линии
-                double totalWorkTime = 0.0;
+                double totalWorkTime = 0.75;
                 //Сюда пишем ошибки подбора
                 List<string> errors = new List<string>();
                 //регулировка общего времени производства
+                
                 double adjustment = 1.0;
-                //Желаемое время происзводства
-                double totalTimeFoProduction = 4.0;
+                if (adj != null) { 
+                if (adj == "Высокая") adjustment = 1.0;
+                if (adj == "Средняя") adjustment = 2.0;
+                if (adj == "Низкая") adjustment = 3.0;
+                }
+
+
 
                 double timeOfPreviousEqWork = 0.0;
-
-
                 //обрабатываем каждый елемент списка оборудования в линии
                 for (int i = 0; i < prodline.EquipmentContent.Capacity; i++)
-                {
-                    //Разбивает время на каждый этап производства
-                    //adjustment = totalTimeFoProduction/prodline.EquipmentContent.Capacity;
-                    
+                {                   
                     //временный список оборудования
                     List<Equipment> equipmentsOfOneType = new List<Equipment>();
                     //после подбора по производительности тут перезатираем Гуйд  
                     Guid bestEquipmentId = new Guid();
                     int productivityOnTheStageShoulBe = 0;
                     if (productivityOnTheStageShoulBe == 0) productivityOnTheStageShoulBe = Convert.ToInt32(Convert.ToDouble(quantityOfMilk)/adjustment);
-
                     //перебераем все оборудование в базе
                     foreach (var eq in db.Equipments)
                     {
@@ -421,7 +448,6 @@ namespace MyProject.Controllers
                         int ii = i + 1;
                         errors.Add("Мы не смогли подобрать оборудования на позицию " + ii + " (" + prodline.EquipmentContent.ElementAt(i) + ")");
                     }
-
                     //отберем минимальную продуктивность
                     foreach (var Eqs in equipmentsOfOneType)
                     {
@@ -436,7 +462,6 @@ namespace MyProject.Controllers
                     }
                     //отобрали лучшее оборудование для данной позиции из списка оборудований в линии. 
                     eqippmentsGuids.Add(bestEquipmentId);
-
                     if (previousEqProductivity == 0) previousEqProductivity = currentMinProductivity;
                     if (currentMinProductivity > previousEqProductivity)
                     {
@@ -446,36 +471,30 @@ namespace MyProject.Controllers
                     { 
                     previousEqProductivity = currentMinProductivity;
                     }
-
                     int exactProductivity = Convert.ToInt32(Convert.ToDouble(quantityOfMilk) / adjustment);
-
-
                     curEqProductivity.Add(exactProductivity);
                     //будем считать время работы оборудования
                     if (equipmentsOfOneType.Count != 0)
                     {
                         double tTime = (quantityOfMilk * 1.0) / exactProductivity;
-                        workTime.Add(tTime);
-                        totalWorkTime += tTime-timeOfPreviousEqWork;
+                        double temtWorkTime = tTime + (prodline.DelayContent.ElementAt(i) / 60);
+                        workTimeForEachEq.Add(temtWorkTime);
+                        delaysList.Add(prodline.DelayContent.ElementAt(i) / 60);
+                        totalWorkTime += temtWorkTime - timeOfPreviousEqWork;
                         timeOfPreviousEqWork = tTime;
                     }
                     //меняем обем сырья, что вышло с оборудования
                     quantityOfMilk = quantityOfMilk * prodline.CapacityContent.ElementAt(i) / 100;
                 }
-
                 ViewBag.Guids = eqippmentsGuids;
-                ViewBag.Times = workTime;
+                ViewBag.Times = workTimeForEachEq;
                 ViewBag.TotalWorkTime = totalWorkTime;
                 ViewBag.Errors = errors;
                 ViewBag.CurEqProductivity = curEqProductivity;
-
+                ViewBag.DelaysList = delaysList;
             }
             return View(db.Equipments);
         }
-
-
-
-
         #endregion
 
     }

@@ -28,6 +28,7 @@
             <th> Для продукта </th>
             <th> Состав линии </th>
             <th> Производительность </th>
+            <th> Выдержка </th>
             @{if (User.IsInRole("admin"))
                 {
                     <th> Кто добавил </th>
@@ -62,7 +63,7 @@
                 }
             </td>
 
-            
+
             @if (item.CapacityContent.Count > 0)
             {
                 <td>
@@ -79,7 +80,26 @@
                     }
                 </td>
             }
-            
+
+
+            @if (item.DelayContent.Count > 0)
+            {
+                <td>
+                    @for (int i = 0; i < item.DelayContent.Count; i++)
+                    {
+                        if (i != item.DelayContent.Count - 1)
+                        {
+                            <span>@item.DelayContent.ElementAt(i) >> </span>
+                        }
+                        else
+                        {
+                            <span>@item.DelayContent.ElementAt(i) </span>
+                        }
+                    }
+                </td>
+            }
+
+
             @{if (User.IsInRole("admin"))
                 {
                     <td>

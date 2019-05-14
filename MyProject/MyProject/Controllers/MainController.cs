@@ -486,6 +486,7 @@ namespace MyProject.Controllers
                     //меняем обем сырья, что вышло с оборудования
                     quantityOfMilk = quantityOfMilk * prodline.CapacityContent.ElementAt(i) / 100;
                 }
+                ViewBag.QuantityOfProduct = quantityOfMilk;
                 ViewBag.Guids = eqippmentsGuids;
                 ViewBag.Times = workTimeForEachEq;
                 ViewBag.TotalWorkTime = totalWorkTime;

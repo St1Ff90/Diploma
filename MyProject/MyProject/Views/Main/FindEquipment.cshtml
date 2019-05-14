@@ -13,10 +13,11 @@
     List<double> delayList = ViewBag.DelaysList;
     List<int> imgHeight = new List<int>();
     List<int> imgWidtht = new List<int>();
+    int qProd = Convert.ToInt32(ViewBag.QuantityOfProduct);
     int totalImgWidth = 0;
 
-    double totalWorkTime = 0.0;
-    if (ViewBag.TotalWorkTime != null)
+    double totalWorkTime = 1.1;
+    if (ViewBag.TotalWorkTime != null && !Double.IsNaN(0/ViewBag.TotalWorkTime))
     {
         totalWorkTime = ViewBag.TotalWorkTime;
     }
@@ -27,7 +28,9 @@
     var oneHourWidth = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", oneHour);
     double margin = 0.0;
     string product = ViewBag.productname;
-    string adjstmn = ViewBag.Adj;
+    string adjstmn = "Средняя";
+    if (ViewBag.Adj != null) { adjstmn = ViewBag.Adj; }
+
     if (ViewBag.Guids != null)
     {
         List<Guid> myGuids = ViewBag.Guids;
@@ -86,8 +89,17 @@
 <body>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
-    <p>На данной странице Вы сможете подобрать оборудование для производства желаемого продукта и передаботки определенного количества входного сырья. </p>
-    <p>Чтобы начать, выберите желаемый готовый продукт в поле со списком и введите количество сырья, которое будет отправлено на переработку. </p>
+
+    @if (equipments.Count == 0)
+    {<p>На данной странице Вы сможете подобрать оборудование для производства желаемого продукта и передаботки определенного количества входного сырья. </p>
+        <p>Чтобы начать, выберите желаемый готовый продукт в поле со списком и введите количество сырья, которое будет отправлено на переработку. </p>
+    }
+    @if (equipments.Count != 0)
+    {<p>Из молока отправленного на переработку (@ViewBag.Quantity кг) будет произведено @qProd кг продукта (@product) </p>
+    }
+
+
+
     <hr />
     <form method="get">
         <div class="form-inline">
@@ -233,16 +245,17 @@
                     <div class="text-align-center washing" title="Мойка 30 мин." style="width:@ConvertToDots(timeOfWashInPer)%">30 мин.</div>
                 </div>
             }
-                <div class="box label-find11">
-                    <label class="legend-label">Легенда:</label>
-                    <div style="background-color:gainsboro;"><img src="~/Content/img/emt.png" class="legend-img" /></div> <label class="legend-label"> - подготовка </label>
-                    <div style="background-color:#c0bb7f;"><img src="~/Content/img/pouring.gif" class="legend-img" /></div> <label class="legend-label"> - наполнение</label>
-                    <div style="background-color:#c0bb7f;"><img src="~/Content/img/draining.gif" class="legend-img" /></div> <label class="legend-label"> - слив </label>
-                    <div style="background-color:#a1ccf0;"><img src="~/Content/img/pouring.gif" class="legend-img" /></div> <label class="legend-label"> - мойка </label>
+            <div class="box label-find11">
+                <label class="legend-label">Легенда:</label>
+                <div style="background-color:gainsboro;"><img src="~/Content/img/emt.png" class="legend-img" /></div> <label class="legend-label"> - подготовка </label>
+                <div style="background-color:#c0bb7f;"><img src="~/Content/img/pouring.gif" class="legend-img" /></div> <label class="legend-label"> - наполнение</label>
+                <div style="background-color:#c0bb7f;"><img src="~/Content/img/emt.png" class="legend-img" /></div> <label class="legend-label"> - работа</label>
+                <div style="background-color:#c0bb7f;"><img src="~/Content/img/draining.gif" class="legend-img" /></div> <label class="legend-label"> - слив </label>
+                <div style="background-color:#a1ccf0;"><img src="~/Content/img/emt.png" class="legend-img" /></div> <label class="legend-label"> - мойка </label>
 
 
-                </div>
-            
+            </div>
+
 
 
         </div>

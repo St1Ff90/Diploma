@@ -1,0 +1,290 @@
+﻿@model IEnumerable<MyProject.Models.Equipment>
+
+
+@{
+    /**/
+
+    ViewBag.Title = "FindEquipment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<MyProject.Models.Equipment> equipments = new List<MyProject.Models.Equipment>();
+    List<double> times = ViewBag.Times;
+    List<string> errors = ViewBag.Errors;
+    List<int> curEqProductivity = ViewBag.CurEqProductivity;
+    List<double> delayList = ViewBag.DelaysList;
+    List<int> imgHeight = new List<int>();
+    List<int> imgWidtht = new List<int>();
+    int qProd = Convert.ToInt32(ViewBag.QuantityOfProduct);
+    int totalImgWidth = 0;
+
+    double totalWorkTime = 1.1;
+    if (ViewBag.TotalWorkTime != null && !Double.IsNaN(0/ViewBag.TotalWorkTime))
+    {
+        totalWorkTime = ViewBag.TotalWorkTime;
+    }
+    int totalWorkTimeInMins = System.Convert.ToInt32(totalWorkTime * 60);
+
+    int timeScale = Convert.ToInt32(System.Math.Ceiling(totalWorkTime));
+    double oneHour = 100.0 / timeScale;
+    var oneHourWidth = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", oneHour);
+    double margin = 0.0;
+    string product = ViewBag.productname;
+    string adjstmn = "Средняя";
+    if (ViewBag.Adj != null) { adjstmn = ViewBag.Adj; }
+
+    if (ViewBag.Guids != null)
+    {
+        List<Guid> myGuids = ViewBag.Guids;
+        foreach (var i in myGuids)
+        {
+            foreach (var m in Model)
+            {
+                if (m.EquipmentId == i)
+                {
+                    equipments.Add(m);
+                }
+            }
+        }
+    }
+
+    foreach (var item in equipments)
+    {
+        System.Drawing.Image img;
+        using (MemoryStream ms = new MemoryStream(item.imageData))
+        {
+            img = System.Drawing.Image.FromStream(ms);
+            imgHeight.Add(img.Height);
+            imgWidtht.Add(img.Width);
+            totalImgWidth += img.Width;
+        }
+    }
+}
+
+@functions{
+    public string ConvertToDots(double data)
+    {
+        var result = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", data);
+        return result;
+    }
+
+    public string retStr(string str)
+    {
+        return str;
+    }
+
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>FindEquipment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script>
+        new WOW().init();
+    </script>
+
+</head>
+
+<body>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @if (equipments.Count == 0)
+    {<p>На данной странице Вы сможете подобрать оборудование для производства желаемого продукта и передаботки определенного количества входного сырья. </p>
+        <p>Чтобы начать, выберите желаемый готовый продукт в поле со списком и введите количество сырья, которое будет отправлено на переработку. </p>
+    }
+    @if (equipments.Count != 0)
+    {<p>Из молока отправленного на переработку (@ViewBag.Quantity кг) будет произведено @qProd кг продукта (@product) </p>
+    }
+
+
+
+    <hr />
+    <form method="get">
+        <div class="form-inline">
+            <label class="control-label label-filter">Продукт: </label>
+            <select class="form-control text-box single-line form_control-p-line" id="product" name="productname">
+                @foreach (var p in ViewBag.Products)
+                {
+                    <option>@p</option>}
+            </select>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                            $('#product option:contains("@product")').prop('selected', true);
+                            });
+            </script>
+            <label class="control-label label-filter">Количество сырья, кг: </label>
+            <input class="form-control text-box single-line form_control-p-line" style="width: 10%;" id="quantity" name="quantityname" type="number" value="@ViewBag.Quantity">
+
+            <label class="control-label label-filter">Продуктивность: </label>
+            <select class="form-control text-box single-line form_control-p-line" id="adjstment" name="adj">
+
+                <option>Низкая</option>
+                <option>Средняя</option>
+                <option>Высокая</option>
+
+            </select>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#adjstment option:contains("@adjstmn")').prop('selected', true);
+                            });
+            </script>
+
+
+
+            <input type="submit" value="Подобрать!" class="btn btn-default find-btn" />
+        </div>
+    </form>
+
+    @if (errors != null)
+    {
+        if (errors.Count != 0)
+        {
+            <hr />
+            <div class="alert alert-warning">
+                <strong>К сожалению, в нашей базе нет всего необходимого Вам оборудования. <br />Данные о времени производства и график работы оборудования могут быть не точными!</strong><br />
+                @foreach (string error in errors)
+                {
+                    @error; <br />
+                }
+            </div>
+        }
+    }
+
+    @if (equipments.Count != 0)
+    {
+        //Equipment table
+        <table class="table">
+            <tr>
+                <th>#</th>
+                <th>Тип</th>
+                <th>Модель</th>
+                <th>Производитель</th>
+                <th>Макс. мощность, кг/час.</th>
+                <th>Исполь. мощность, кг/час.</th>
+                <th> Характеристики </th>
+            </tr>
+            @for (int i = 0; i < equipments.Count; i++)
+            {
+                MyProject.Models.Equipment eq = equipments.ElementAt(i);
+                <tr>
+                    <td>@{int ii = i + 1;} @ii</td>
+                    <td>@eq.Type</td>
+                    <td>@eq.Name</td>
+                    <td>@eq.Producer</td>
+                    <td>@eq.Productivity</td>
+                    <td>@curEqProductivity.ElementAt(i)</td>
+                    <td>@eq.Characteristics</td>
+                </tr>
+            }
+        </table>
+        <hr />
+        //TotalWorkTime
+        <div class="wow zoomIn content">
+            <label class="label-find11">Весь процесс происзводства займет @System.Math.Round(totalWorkTime, 2) ч. (@totalWorkTimeInMins мин. )</label>
+            <div class="box">
+
+                @for (int i = 0; i < times.Count; i++)
+                {
+                    double myWidth = times.ElementAt(i) * 100 / times.ToArray().Sum();
+                    double minutes = times.ElementAt(i) * 60;
+                    Random ran = new Random(Guid.NewGuid().GetHashCode());
+                    var curWidth = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", myWidth);
+                    string value = System.Math.Round(minutes, 0) + "мин.";
+                    //if (myWidth > 10) { value = equipments.ElementAt(i).Type + " " + System.Math.Round(minutes, 0) + "мин."; } else { value = ""; }
+
+                    <div class="text-align-center" title="@equipments.ElementAt(i).Name | @equipments.ElementAt(i).Type | Время работы: @System.Math.Round(minutes, 0) мин." style="background-color: rgb(@ran.Next(20, 50), @ran.Next(150, 255), @ran.Next(255)); border:thin; width:@curWidth%;">@value &nbsp;</div>
+                }
+            </div>
+        </div>
+        <hr />
+        //Timeline
+        <div class="content content-image" style="background-size:@ConvertToDots(oneHour*8.0*98/100)%; ">
+
+            <label class="label-find11">График производственных процессов:</label>
+            <div class="box">
+                @for (int i = 0; i < timeScale; i++)
+                {
+                    <div class="shema-div" style="width:@oneHourWidth%"><div class="shema-text">@i</div></div>
+                }
+            </div>
+
+            @for (int i = 0; i < times.Count; i++)
+            {
+                double timeOfOneEqWorkInPersents = times.ElementAt(i) * oneHour;
+                double timeOfDelayInPer = delayList.ElementAt(i) / times.ElementAt(i) * 100;
+                double delayInHours = delayList.ElementAt(i) * oneHour;
+                double timeOfFillingInPer = 100 - timeOfDelayInPer;
+                double shift = 102 * (100 * delayInHours / timeOfOneEqWorkInPersents) / timeOfFillingInPer;
+                double timeOfPreparationInPer = 0.25 * oneHour;
+                double timeOfWashInPer = 0.5 * oneHour;
+                double minutes = times.ElementAt(i) * 60;
+                double curMargin = margin;
+                double curMarginText = curMargin + timeOfOneEqWorkInPersents;
+
+                var curMarginTextString = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.00}", curMarginText);
+
+                margin += (delayList.ElementAt(i)) * oneHour;
+                Random ran = new Random(Guid.NewGuid().GetHashCode());
+                string value = equipments.ElementAt(i).Type + " " + System.Math.Round(minutes, 0) + "мин.";
+
+                <div class="wow slideInLeft box" data-wow-duration="3s">
+                    <div class="text-align-center preparing" title="Подготовка 15 мин." style="margin-left:@ConvertToDots(curMargin)%; width:@ConvertToDots(timeOfPreparationInPer)%">15 мин.</div>
+
+                    <div class="mainblock" title="@equipments.ElementAt(i).Name | @equipments.ElementAt(i).Type | Время работы: @System.Math.Round(minutes, 0) мин." style="width:@ConvertToDots(timeOfOneEqWorkInPersents)%;">
+                        <div class="non-margin pouring" style="color:blue; width:@ConvertToDots(timeOfFillingInPer)%;">
+
+                            <div class="draining" style="margin-right:-4px; margin-left: @ConvertToDots(shift)%; width:100%;">
+                                &nbsp;
+                            </div>
+                            &nbsp;
+                        </div>
+                        &nbsp;
+                    </div>
+                    <div class="text-align-center washing" title="Мойка 30 мин." style="width:@ConvertToDots(timeOfWashInPer)%">30 мин.</div>
+                </div>
+            }
+            <div class="box label-find11">
+                <label class="legend-label">Легенда:</label>
+                <div style="background-color:gainsboro;"><img src="~/Content/img/emt.png" class="legend-img" /></div> <label class="legend-label"> - подготовка </label>
+                <div style="background-color:#c0bb7f;"><img src="~/Content/img/pouring.gif" class="legend-img" /></div> <label class="legend-label"> - наполнение</label>
+                <div style="background-color:#c0bb7f;"><img src="~/Content/img/emt.png" class="legend-img" /></div> <label class="legend-label"> - работа</label>
+                <div style="background-color:#c0bb7f;"><img src="~/Content/img/draining.gif" class="legend-img" /></div> <label class="legend-label"> - слив </label>
+                <div style="background-color:#a1ccf0;"><img src="~/Content/img/emt.png" class="legend-img" /></div> <label class="legend-label"> - мойка </label>
+
+
+            </div>
+
+
+
+        </div>
+        <hr />
+        //Image schema
+        <style>
+            @for (int i = 0; i < equipments.Count; i++)
+            {
+                @Html.Raw(" .my-class_" + i + " {background: url(data:image/png;base64," + Convert.ToBase64String(equipments.ElementAt(i).imageData) + "); background-repeat: no-repeat; background-size: 100%; background-position: left bottom; vertical-align:bottom; }");
+            }
+        </style>
+        <div class="content grafic-shema">
+            <label class="label-find11">Аппаратурно-технологическая схема:</label>
+            <div class="box" style="height: auto">
+
+                @for (int i = 0; i < equipments.Count; i++)
+                {
+                    int curImgWidth = 1020 * imgWidtht.ElementAt(i) / totalImgWidth;
+                    int curImgHigh = imgHeight.ElementAt(i) * curImgWidth / imgWidtht.ElementAt(i);
+                    string curImgWidthStr = curImgWidth.ToString() + "px";
+                    string curImgHighStr = curImgHigh.ToString() + "px";
+                    string delayWow = null;
+                    if (i < 10) { delayWow = "0." + i + "s"; }
+                    else { delayWow = "1." + i % 10 + "s"; }
+
+                    <div data-wow-delay="@delayWow" class="wow bounceInDown my-class_@i" title="@equipments.ElementAt(i).Name | @equipments.ElementAt(i).Type | Время работы: @System.Math.Round(times.ElementAt(i) * 60, 0) мин." style="border:thin; width:@curImgWidthStr; height:@curImgHighStr;"> &nbsp;</div>
+                }
+            </div>
+        </div>
+    }
+</body>
+</html>

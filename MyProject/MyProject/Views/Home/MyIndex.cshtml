@@ -1,0 +1,56 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>MyIndex</title>
+</head>
+<body>
+    <div>
+        <h1><strong>Страница тестирования приложения:</strong> </h1>
+        <h2><em>Контроллеры и функции.</em></h2>
+        <p><strong>Account</strong></p>
+        <ul>
+            <li><strong><a href="/Account/Login">Login</a></strong></li>
+            <li><strong><a href="/Account/Register">Register</a></strong></li>
+            <li><strong><a href="/Account/UserList">Список пользовалелей</a></strong>
+                <ul>
+                    <li><a href="/Account/DeleteUser">Удалить (!)</a></li>
+                </ul>
+            </li>
+            <li><strong><a href="/Account/GetRole">Получить роль текущего пользователя</a></strong><strong></strong></li>
+        </ul>
+
+        <p><strong>Main</strong></p>
+        <ul>
+            <li>
+                <strong>Equipment</strong>
+                <ul>
+                    <li><a href="/Main/ListOfEquipments">Список </a></li>
+                    <li><a href="/Main/CreateEquipment">Создать</a></li>
+                    <li><a href="/Main/EquipmentDetails">Детальнее (!)</a></li>
+                    <li><a href="/Main/EditEquipment">Редактировать (!)</a></li>
+                    <li><a href="/Main/DeleteEquipment">Удалить (!)</a></li>
+                </ul>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <strong>ProductionLine</strong><br />
+                <ul>
+                    <li><a href="/Main/ListOfProductionLines">Список</a></li>
+                    <li><a href="/Main/CreateProductionLine">Создать</a></li>
+                    <li><a href="/Main/ProductionLineDetails">Детальнее (!)</a></li>
+                    <li><a href="/Main/EditProductLines">Редактировать (!)</a></li>
+                    <li><a href="/Main/DeleteProductionLine">Удалить (!)</a></li>
+                </ul>
+            </li>
+        </ul>
+            </div>
+</body>
+</html>

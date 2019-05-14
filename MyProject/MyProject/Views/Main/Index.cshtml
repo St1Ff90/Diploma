@@ -1,0 +1,33 @@
+﻿@model IEnumerable<MyProject.Models.ProductionLine>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 style="margin-top: 0px;">
+    Здравствуйте @if (User.Identity.Name.Length > 0)
+    {@User.Identity.Name;
+} @if (User.Identity.Name.Length == 0)
+    {@Html.Raw("гость")},
+</h3>
+<p>Данный сайт сайт предназначен для облегчения поиска и подбора молокоперерабатывающего оборудования.</p>
+<p>
+    Здесь вы сможете найти характеристики конкретного оборудования, сферу его применения, а также подобрать оборудование автоматически, исходя из ассортимента продукции, которую планируется производить.
+</p>
+
+<table class="table">
+    <tr>
+        <th class="del-border">
+            <a href="/Main/ListOfEquipments"><img class="btm-img" src="~/Content/img/catalog.png" /></a>
+
+        </th>
+        <th class="del-border">
+            <a href="/Main/FindEquipment"><img class="btm-img" src="~/Content/img/autoselection.png" /></a>        
+        </th>
+    </tr>
+
+</table>
+
+
+

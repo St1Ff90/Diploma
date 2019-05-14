@@ -12,41 +12,47 @@
     <title>ListOfProductionLines</title>
 </head>
 <body>
-    <p>
-        @Html.ActionLink("Create New", "CreateProductionLine")
-    </p>
+    @{if (User.IsInRole("admin"))
+        {
+            <p>
+                @Html.ActionLink("Добавить линию производства для продукта", "CreateProductionLine")
+            </p>
+        } }
     <table class="table">
+
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DateOfCreation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EquipmentContent)
-            </th>
-            <th></th>
+            @{if (User.IsInRole("admin"))
+                {
+                    <th> Дата </th>
+                } }
+            <th> Для продукта </th>
+            <th> Состав линии </th>
+            <th> Производительность </th>
+            <th> Выдержка </th>
+            @{if (User.IsInRole("admin"))
+                {
+                    <th> Кто добавил </th>
+                    <th></th>
+                }}
         </tr>
-    
-    @foreach (var item in Model) {
+
+        @foreach (var item in Model)
+        {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfCreation)
-            </td>
+            @{if (User.IsInRole("admin"))
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateOfCreation)
+                    </td>
+                } }
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User)
-            </td>
+
             <td>
                 @for (int i = 0; i < item.EquipmentContent.Count; i++)
                 {
-                    if (i != item.EquipmentContent.Count-1)
+                    if (i != item.EquipmentContent.Count - 1)
                     {
                         <span>@item.EquipmentContent.ElementAt(i) >> </span>
                     }
@@ -56,14 +62,62 @@
                     }
                 }
             </td>
-            <td>
-                @Html.ActionLink("Edit", "EditProductLines", new { id = item.ProductionLineId }) |
-                @Html.ActionLink("Details", "ProductionLineDetails", new { id = item.ProductionLineId }) |
-                @Html.ActionLink("Delete", "DeleteProductionLine", new { id = item.ProductionLineId })
-            </td>
+
+
+            @if (item.CapacityContent.Count > 0)
+            {
+                <td>
+                    @for (int i = 0; i < item.CapacityContent.Count; i++)
+                    {
+                        if (i != item.CapacityContent.Count - 1)
+                        {
+                            <span>@item.CapacityContent.ElementAt(i) >> </span>
+                        }
+                        else
+                        {
+                            <span>@item.CapacityContent.ElementAt(i) </span>
+                        }
+                    }
+                </td>
+            }
+
+
+            @if (item.DelayContent.Count > 0)
+            {
+                <td>
+                    @for (int i = 0; i < item.DelayContent.Count; i++)
+                    {
+                        if (i != item.DelayContent.Count - 1)
+                        {
+                            <span>@item.DelayContent.ElementAt(i) >> </span>
+                        }
+                        else
+                        {
+                            <span>@item.DelayContent.ElementAt(i) </span>
+                        }
+                    }
+                </td>
+            }
+
+
+            @{if (User.IsInRole("admin"))
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User)
+                    </td>
+
+
+                    <td>
+                        @Html.ActionLink("Изменить", "EditProductLines", new { id = item.ProductionLineId }) |
+                        @Html.ActionLink("Детали", "ProductionLineDetails", new { id = item.ProductionLineId }) |
+                        @Html.ActionLink("Удалить", "DeleteProductionLine", new { id = item.ProductionLineId })
+                    </td>
+                } }
+
+
         </tr>
-    }
-    
+        }
+
     </table>
 </body>
 </html>

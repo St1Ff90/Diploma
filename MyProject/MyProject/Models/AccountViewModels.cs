@@ -6,7 +6,7 @@ namespace MyProject.Models
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
-        [Display(Name = "Адрес электронной почты")]
+        [Display(Name = "Электронная почта")]
         public string Email { get; set; }
     }
 
@@ -49,7 +49,7 @@ namespace MyProject.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Адрес электронной почты")]
+        [Display(Name = "Электронная почта")]
         [EmailAddress]
         public string Email { get; set; }
 
@@ -64,6 +64,10 @@ namespace MyProject.Models
 
     public class RegisterViewModel
     {
+        [Required]
+        [Display(Name = "Логин")]
+        public string Login { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Адрес электронной почты")]

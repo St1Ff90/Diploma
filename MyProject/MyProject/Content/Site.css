@@ -3,6 +3,93 @@
     padding-bottom: 20px;
 }
 
+.login-checkbox {
+    margin-left: 15%;
+    padding-top: 0px !important;
+}
+
+.login-label {
+    padding-left: 0px !important;
+    font-weight: 700 !important;
+}
+
+.reg-porpose {
+    margin-left: 26%;
+    font-size: 17.5px;
+}
+
+.reg-btn {
+    margin-left: 25%;
+}
+
+.reg-label {
+    width: 25%;
+}
+
+.col-reg {
+    width: 75%;
+}
+
+.add-p-line {
+    width: 83.33333333%;
+}
+
+.text-align-center {
+    text-align: center;
+}
+
+.form_control-p-line {
+    display: inline-block !important;
+    width: auto;
+}
+
+.list-img {
+    max-width: 150px;
+    max-height: 75px;
+}
+
+.btn-register {
+    width: 100%;
+    max-width: 280px;
+}
+
+.form-inline {
+    margin-bottom: 15px;
+}
+
+.label-filter,
+.form-control {
+    margin-right: 10px;
+}
+
+.filter-btn {
+    margin-left: 60px;
+}
+
+.btm-img {
+    width: 70%;
+    margin-left: 15%;
+    margin-right: 15%;
+    border-radius: 4px;
+    border-top: none;
+}
+
+.del-border {
+    border-top: none !important;
+}
+
+.logo {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.navbar navbar-default {
+    margin-top: 10px;
+}
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
@@ -21,4 +108,118 @@ input,
 select,
 textarea {
     max-width: 280px;
+}
+
+.content {
+    overflow: hidden;
+    width: 100%;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.content-image {
+    background: url(img/skaleNew.png) 100% 100% no-repeat;
+    background-size: 100%;
+    background-position: top 46px left 6px;
+}
+
+.find-btn {
+    max-width: none;
+    width: 16%;
+}
+
+.box {
+    white-space: nowrap;
+    height: 28px;
+    width: 98%;
+    margin-left: 1%;
+    margin-top: 9px;
+}
+
+.label-find11 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: -5px;
+    margin-top: 5px;
+}
+
+.box div {
+    margin-left: -2px;
+    margin-right: -2px;
+    display: inline-block;
+    border: 1px solid black;
+    border-radius: 2px;
+}
+
+.shema-text {
+    margin-left: 2px !important;
+    background-color: #eee;
+    border: none !important;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+.non-margin {
+    margin-left: 0px !important;
+    margin-right: -4px !important;
+}
+
+.shema-div {
+    border: hidden !important;
+    border-radius: 0px !important;
+    text-align: left !important;
+}
+
+.pouring {
+    background: url(img/pouring.gif) no-repeat;
+    background-size: 100% 100%;
+    border-left: none !important;
+}
+
+.draining {
+    background: url(img/draining.gif) 100% 100% no-repeat;
+    background-size: 100% 100%;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    border-right: none !important;
+}
+
+.preparing {
+    background-color: gainsboro;
+}
+
+.washing {
+    background-color: #a1ccf0;
+}
+
+.mainblock {
+    background-color: #c0bb7f;
+    border: thin;
+    border: 0px !important;
+}
+
+.shema-img{
+    vertical-align:bottom;
+}
+
+.my-clas {
+    margin-left: -6px !important;
+    margin-right: -6px !important;
+}
+
+.legend-label {
+    background-color: #eee;
+    margin-right: 20px;
+}
+
+.legend-div {
+    background-color: aliceblue;
+}
+
+.legend-img {
+    
+    width: 90%;
+    margin-bottom:-1px;
 }

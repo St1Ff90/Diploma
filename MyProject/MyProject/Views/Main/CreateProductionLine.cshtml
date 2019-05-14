@@ -31,21 +31,20 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.User, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.User, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.User, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-
-        <div class="form-group">
             <label class="control-label col-md-2" for="equipments1">Оборудование №1</label>
 
-            <div class="col-md-10">
-                <input class="form-control text-box single-line" id="equipments1" name="equipments" type="text">
+            <div class="col-md-10">               
+                <select class="form-control text-box single-line form_control-p-line" id="equipments1" name="equipments">@foreach(string type in ViewBag.Equipments) {<option>@type</option>}</select>
                 <span class="field-validation-valid text-danger" data-valmsg-for="equipments" data-valmsg-replace="true"></span>
+
+                <input class="form-control text-box single-line form_control-p-line" id="capacitys1" name="capacitys" type="number" value="100" title="Выход продукта в %">
+                <span class="field-validation-valid text-danger" data-valmsg-for="capacitys" data-valmsg-replace="true"></span>
+
+                <input class="form-control text-box single-line form_control-p-line" id="delay1" name="delays" type="number" value=0 title="Выдержка в оборудовании, мин.">
+                <span class="field-validation-valid text-danger" data-valmsg-for="capacitys" data-valmsg-replace="true"></span>
             </div>
+
+
         </div>
 
         <div ID="items">
@@ -69,8 +68,18 @@
                 div = document.getElementById("items");
                 button = document.getElementById("add");
                 items++;
-                newitem = "<div class=\"form-group\"><label class=\"control-label col-md-2\" for=\"equipments " + items + "\">Оборудование №" + items + "</label>";
-                newitem += "<div class=\"col-md-10\"><input class=\"form-control text-box single-line\" id=\"equipments " + items + "\" type=\"text\" name=\"equipments\"><span class=\"field-validation-valid text-danger\" data-valmsg-for=\"equipments\" data-valmsg-replace=\"true\"></span></div></div>";
+                newitem = "<div class=\"form-group\"><label class=\"control-label col-md-2\" for=\"equipments " + items + "\">Оборудование №" + items + "</label><div class=\"col-md-10\">";
+                newitem += "<select class=\"form-control text-box single-line form_control-p-line\" id=\"equipments " + items + "\" name=\"equipments\"><option></option>@foreach(string type in ViewBag.Equipments) {<option>@type</option>}</select>";
+                newitem += "<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"equipments\" data-valmsg-replace=\"true\"></span>";
+
+                newitem += "<input class=\"form-control text-box single-line form_control-p-line\" id=\"capacitys1\" name=\"capacitys\" type=\"number\" value=\"100\" title=\"Выход продукта в %\">";
+                newitem += "<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"capacitys\" data-valmsg-replace=\"true\"></span>";
+
+                newitem += "<input class=\"form-control text-box single-line form_control-p-line\" id=\"delay1\" name=\"delays\" type=\"number\" value=\"0\" title=\"Выдержка в оборудовании, мин.\">";
+                newitem += "<span class=\"field-validation-valid text-danger\" data-valmsg-for=\"capacitys\" data-valmsg-replace=\"true\"></span>";
+
+                newitem += "</div></div>";
+
                 newnode = document.createElement("span");
                 newnode.innerHTML = newitem;
                 div.insertBefore(newnode, button);

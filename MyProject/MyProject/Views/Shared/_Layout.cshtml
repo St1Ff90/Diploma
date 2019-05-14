@@ -11,14 +11,15 @@
 
 
     <title>@ViewBag.Title</title>
-    <link href="~/Content//bootstrap.min.css" rel="stylesheet" />
-    <link href="~/Content/Site.css" rel="stylesheet">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet"> 
 </head>
 
 <body>
     <div class="container">
 
 
+        <a href="/Main"><img class="logo" src="~/Content/img/logo.png" /></a>        
         <!-- Static navbar -->
         <div class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
@@ -29,16 +30,15 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand">Заказ этикеток</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="/Home">Главная</a></li>
-                        <li><a href="/Home/Help">Помощь</a></li>
-                        <li><a href="/Statics/ThinClient.html">Статика</a></li>
+                        <li class="active"><a href="/Main">Главная</a></li>
+                        <li><a href="/Main/ListOfEquipments">Оборудование</a></li>
+                        <li><a href="/Main/ListOfProductionLines">Линии</a></li>
                         @{if (User.IsInRole("admin"))
                             {
-                                <li><a href="~/Home/AdminPanel">Админцентр</a></li>} }
+                                <li><a href="~/Home/MyIndex">Админцентр</a></li>} }
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         @Html.Partial("_LoginPartial")

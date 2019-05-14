@@ -9,6 +9,11 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MyProject.Models;
+using System.Collections.Generic;
+using System.Net;
+using System.Data;
+using System.Data.Entity;
+using System.IO;
 
 namespace MyProject.Controllers
 {
@@ -22,7 +27,7 @@ namespace MyProject.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -34,9 +39,9 @@ namespace MyProject.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -75,7 +80,8 @@ namespace MyProject.Controllers
 
             // Сбои при входе не приводят к блокированию учетной записи
             // Чтобы ошибки при вводе пароля инициировали блокирование учетной записи, замените на shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            ApplicationUser signedUser = UserManager.FindByEmail(model.Email);
+            var result = await SignInManager.PasswordSignInAsync(signedUser.UserName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -120,7 +126,7 @@ namespace MyProject.Controllers
             // Если пользователь введет неправильные коды за указанное время, его учетная запись 
             // будет заблокирована на заданный период. 
             // Параметры блокирования учетных записей можно настроить в IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -151,12 +157,13 @@ namespace MyProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Login, Email = model.Email};
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await UserManager.AddToRoleAsync(user.Id, "user");
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // Дополнительные сведения о включении подтверждения учетной записи и сброса пароля см. на странице https://go.microsoft.com/fwlink/?LinkID=320771.
                     // Отправка сообщения электронной почты с этой ссылкой
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -449,7 +456,7 @@ namespace MyProject.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Main");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult
@@ -481,5 +488,74 @@ namespace MyProject.Controllers
             }
         }
         #endregion
+
+
+        [Authorize]
+        public ActionResult GetRole()
+        {
+            IList<string> roles = new List<string> { "Роль не определена" };
+            ApplicationUserManager userManager = HttpContext.GetOwinContext()
+                                                    .GetUserManager<ApplicationUserManager>();
+            ApplicationUser user = userManager.FindByName(User.Identity.Name);
+            if (user != null)
+                roles = userManager.GetRoles(user.Id);
+            return View(roles);
+        }
+
+        [Authorize]
+        public ActionResult UserList()
+        {
+            IList<ApplicationUser> users = new List<ApplicationUser> { };
+            ApplicationUserManager userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            users = userManager.Users.ToList();
+            return View(users);
+        }
+
+
+        public async Task<ActionResult> DeleteUser(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            //get User Data from Userid
+            var user = await UserManager.FindByIdAsync(id);
+            //List Logins associated with user
+            var logins = user.Logins;
+            //Gets list of Roles associated with current user
+            var rolesForUser = await UserManager.GetRolesAsync(id);
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                foreach (var login in logins.ToList())
+                {
+                    await UserManager.RemoveLoginAsync(login.UserId, new UserLoginInfo(login.LoginProvider, login.ProviderKey));
+                }
+                if (rolesForUser.Count() > 0)
+                {
+                    foreach (var item in rolesForUser.ToList())
+                    {
+                        // item should be the name of the role
+                        var result = await UserManager.RemoveFromRoleAsync(user.Id, item);
+                    }
+                }
+
+                //Delete User
+                await UserManager.DeleteAsync(user);
+
+                TempData["Message"] = "User Deleted Successfully. ";
+                TempData["MessageValue"] = "1";
+                //transaction.commit();
+            }
+
+            return RedirectToAction("UserList", "Account", new { area = "", });
+        }
+
+        ApplicationDbContext context = new ApplicationDbContext();
+
+
+
+
+
     }
 }

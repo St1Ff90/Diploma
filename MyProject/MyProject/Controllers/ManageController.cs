@@ -384,6 +384,20 @@ namespace MyProject.Controllers
             Error
         }
 
-#endregion
+        #endregion
+
+        
+
+
+
+
+
+        public ActionResult Index1()
+        {
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                return View(db.Users.ToList());
+            }
+        }
     }
 }
